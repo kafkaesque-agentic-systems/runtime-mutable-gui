@@ -1,0 +1,38 @@
+/* Design tokens: <<project name>>.
+   The mockups read these values, and the product's theme is written from them.
+   Change a value here and every mockup follows. */
+:root {
+  /* colour roles: a pair is a background and the text or icon colour used on it */
+  --color-surface: <<#hex>>;
+  --color-on-surface: <<#hex>>;
+  --color-surface-raised: <<#hex>>;
+  --color-on-surface-muted: <<#hex>>;
+  --color-primary: <<#hex>>;
+  --color-on-primary: <<#hex>>;
+  --color-outline: <<#hex>>;
+  --color-error: <<#hex>>;
+  --color-on-error: <<#hex>>;
+
+  /* type */
+  --font-family-body: <<family, fallbacks>>;
+  --font-family-display: <<family, fallbacks>>;
+  --font-size-sm: <<13px>>;
+  --font-size-md: <<16px>>;
+  --font-size-lg: <<20px>>;
+  --font-size-xl: <<28px>>;
+
+  /* space and shape */
+  --space-1: <<4px>>;
+  --space-2: <<8px>>;
+  --space-3: <<16px>>;
+  --space-4: <<24px>>;
+  --space-5: <<40px>>;
+  --radius-sm: <<6px>>;
+  --radius-md: <<12px>>;
+  --radius-lg: <<20px>>;
+  --shadow-raised: <<0 1px 3px rgba(0, 0, 0, 0.2)>>;
+
+  /* motion */
+  --duration-quick: <<120ms>>;
+  --duration-standard: <<240ms>>;
+}

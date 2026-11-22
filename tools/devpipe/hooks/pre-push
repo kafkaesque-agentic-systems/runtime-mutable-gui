@@ -1,0 +1,8 @@
+#!/bin/sh
+# devpipe-managed
+# Purpose: agents never push. Pushing stays the owner's act.
+if [ "${DEVPIPE_AGENT:-}" = "1" ]; then
+  echo "devpipe: agents do not push." >&2
+  exit 1
+fi
+exit 0

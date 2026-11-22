@@ -1,0 +1,7 @@
+#!/bin/sh
+# devpipe-managed
+# Purpose: remove AI or tool attribution from every commit message. The owner is the only author.
+# Side effects: rewrites the message file git passes as $1.
+file="$1"
+grep -v -i -E '^(co-authored-by:|generated with |made with |🤖)' "$file" > "$file.devpipe" || true
+mv "$file.devpipe" "$file"

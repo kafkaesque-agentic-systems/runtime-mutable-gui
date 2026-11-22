@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "slug": "runtime-mutable-gui",
+  "adapter": "claude",
+  "profile": "claude",
+  "model": "",
+  "agents": {
+    "engineer": "runtime-mutable-gui-engineer",
+    "reviewer": "runtime-mutable-gui-reviewer",
+    "diagnostic": "runtime-mutable-gui-diagnostic"
+  },
+  "phase_gate": [],
+  "scope_allow": []
+}

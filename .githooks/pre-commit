@@ -1,0 +1,21 @@
+#!/bin/sh
+# devpipe-managed
+# Purpose: agents never commit; the runner commits after verify and review have passed.
+# The adapters set DEVPIPE_AGENT=1 in every agent process. Project checks go in
+# .githooks/pre-commit.project, which this hook runs for every other commit.
+if [ "${DEVPIPE_AGENT:-}" = "1" ]; then
+  echo "devpipe: agents do not commit. Finish the ticket; the runner commits." >&2
+  exit 1
+fi
+# A merge that is finished by hand (after a conflict, or after the merge hook refused it) is a
+# commit, and comes through here: a phase branch is merged only when its gate is green (design D-32).
+if [ -f tools/devpipe/run.py ] && git rev-parse -q --verify MERGE_HEAD > /dev/null 2>&1 < /dev/null; then
+  python3 tools/devpipe/run.py gate --merging MERGE_HEAD < /dev/null >&2
+  if [ $? -eq 1 ]; then
+    echo "devpipe: merge refused. End the open merge with: git merge --abort" >&2
+    exit 1
+  fi
+fi
+hook="$(dirname "$0")/pre-commit.project"
+if [ -x "$hook" ]; then exec "$hook" "$@"; fi
+exit 0

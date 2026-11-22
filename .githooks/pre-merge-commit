@@ -1,0 +1,19 @@
+#!/bin/sh
+# devpipe-managed
+# Purpose: a phase branch is merged only when every gate command has passed on its tree (design D-32).
+# git runs this hook for a merge that makes a merge commit, and names what is merged in
+# GIT_REFLOG_ACTION ("merge phase/07"). A fast-forward and a merge made on a hosting service do not
+# come through here: for those, `devpipe gate --phase N` before the merge is the owner's own step.
+# Project checks go in .githooks/pre-merge-commit.project, which this hook runs afterwards.
+name=$(printf '%s\n' "${GIT_REFLOG_ACTION:-}" | sed -n 's/^merge  *\([^ ][^ ]*\)$/\1/p')
+tool=tools/devpipe/run.py
+if [ -n "$name" ] && [ -f "$tool" ]; then
+  python3 "$tool" gate --merging "$name" < /dev/null >&2
+  if [ $? -eq 1 ]; then
+    echo "devpipe: merge refused. If git left the merge open, end it with: git merge --abort" >&2
+    exit 1
+  fi
+fi
+hook="$(dirname "$0")/pre-merge-commit.project"
+if [ -x "$hook" ]; then exec "$hook" "$@"; fi
+exit 0
