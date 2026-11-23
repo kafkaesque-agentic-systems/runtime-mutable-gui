@@ -285,7 +285,7 @@ message}"; "has a {kind id} element whose property “{name}” {reason}".
 
 ## Choices this plan makes where the specification is silent
 
-Each is binding on the steps that use it. The owner ratifies them with the plan; they are then
+Each is binding on the steps that use it. The owner ratified all thirty on 2026-11-22; they are
 recorded as D-48 in `design/DECISIONS.md`.
 
 | # | Choice | Used in |

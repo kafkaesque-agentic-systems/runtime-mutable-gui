@@ -548,3 +548,49 @@ shows "Macro" and an XY pad shows none; an empty string shows no caption. Option
 64 characters) on panel. Optional `tracking` (0 to 8 canvas units, default 0) on label.
 Consequences: The specification's data model lists the three fields; schema version 1 includes
 them; the inspector's Caption section edits `caption`.
+
+## D-48 — The development plan's choices where the specification is silent
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner ratified, 2026-11-22: "Ratify all")
+Context: Writing `DEV_PLAN.md` met thirty points the specification, the architecture and the
+interface record leave open: data-model nullability and ranges, undo depth, library file names,
+interaction thresholds, the asset rule, and one limit of the window backend (egui-baseview 0.9.0
+reads the clipboard only on ⌘V).
+Decision: The thirty choices below, numbered as in the plan's table "Choices this plan makes
+where the specification is silent":
+
+1. Binding slots and taps may be `null`: `binding`, `x`, `y`, each entry of `targets` (1–16 entries), a display's `tap`, an image's `asset`. A palette element starts with nulls (R-069). A null slot draws unbound with the value line "Not bound" (a display: "No signal"), ignores input, and is listed in the unbound list.
+2. Frames are integers: `x`, `y` from −4,000 to 8,000, `width`, `height` from 1 to 8,000; values outside are refused naming the field. User resizes keep at least 8 × 8 (R-074).
+3. Group members keep absolute canvas frames; a group's frame is the bounding box of its members, recomputed by every command that changes a member. Selection holds top-level elements only.
+4. Paste keeps the copied frames; incoming assets whose id the instance already has are not added again.
+5. `SetLayout`, `SetTheme` and `SetAll` (whole-document replacements) drop the assets that neither the new layout nor the new theme refers to; no other command drops an asset, and the Type tab removes an unreferenced asset on request. A string equal to an asset id anywhere inside an unknown element's `props` counts as a reference (I-20).
+6. The generator gives an enum parameter with more than 32 values a knob, and leaves out the plugin-name page when every parameter is in a group and at least one group exists.
+7. An instance state whose `current_page` names no page opens on the first page.
+8. Undo keeps the last 200 steps.
+9. A long press is 600 ms with the pointer within 4 logical px of where it went down; the menu button is "near" within 64 logical px of its centre.
+10. Library file names: the entry name with `/ \ : * ? " < > |`, control characters and a leading `.` replaced by `_`, plus `.mgui`; the listed name comes from the package's `name`. The user default is `layouts/<clap id>/.default.mgui` (a package with layout, theme and assets; its `name` is the entry it was set from, or "Current layout"); the suite default theme is `themes/.default.mgui` (a theme-only package). Listings skip names starting with `.`; the star marks the entry whose name equals the default's `name`.
+11. "Use as my default" on a library layout entry stores that layout with the instance's current theme. Applying a library layout entry (the "Developer default" entry included) replaces the layout only; Reset to developer default replaces layout and theme.
+12. Editor menu "Export package…" writes the current layout and theme; a library entry's Export… writes that entry alone.
+13. "Import theme…" applies only the package's theme, as one undoable change, and refuses a package with no theme.
+14. The cross-plugin notice names the source CLAP id (packages carry no plugin name).
+15. Packages are written with `created` as UTC `YYYY-MM-DDTHH:MM:SSZ` and no `author`; library dates show the file's UTC modification date as "20 Nov 2026".
+16. A host state load during a drag ends every open gesture and drops the drag before the new state is shown.
+17. The S-02 small presentation (drill-in submenus) and the S-04 small presentation (compact toolbar, palette behind "+", bottom-sheet inspector) apply when the window is narrower than 520 logical px or lower than 420.
+18. Built-in themes fill `canvas` and `display` with solid background, `panel` with solid surface, `control` with solid surface-raised; their typefaces are Inter, Inter and Hack (UI.md).
+19. An element's `colours` may hold only its kind's slot names (table above); another name is refused naming it.
+20. Menu element `set` actions use a 0-based step index.
+21. Font fallback chain for every family: the named font, then Inter, then Hack, then egui's emoji fonts; a missing glyph draws from the next font.
+22. An asset's decoded size is the length of its base64-decoded file bytes; the 4 MiB caps count those.
+23. Page tabs and menu elements open no control menu: they have no parameter value to reset, type or fine-adjust.
+24. "Type value…" is offered for knobs, faders, switches and selectors; on XY pads and macros, which drive several parameters, it is drawn disabled.
+25. Keyboard: on an XY pad Up and Down change Y, Left and Right change X; on page tabs Left and Right go to the previous and next page; Enter on a menu element opens its list.
+26. Pages and elements are held as `Arc`; the undo stack keeps whole previous instance states, which share every unchanged page, element and asset.
+27. A design-mode drag previews the move and commits one command on release; each arrow-key press is one command.
+28. egui-baseview 0.9.0 reads the clipboard only when ⌘V reaches the window and ignores `ViewportCommand::RequestPaste`, and the stack has no clipboard crate; so the Arrange popover's "Paste ⌘V" entry is drawn disabled with the hint "Press ⌘V in the plugin window". Every other shortcut action works from a menu.
+29. The library preview of a layout entry draws its first page scaled into the preview area with the instance's active theme; a theme entry shows strips of its background, surface, text and eight accent colours.
+30. A font asset is listed by the family name in its `name` table (read with skrifa), an image asset as "Image n (W × H)".
+
+Consequences: Every step that uses a choice cites its number. Choice 28 leaves the edge case
+"the editor menu offers every action that has a shortcut" unmet for Paste; closing it needs a
+clipboard crate in the stack, which is a separate decision.
