@@ -28,7 +28,9 @@ Ranges: R-001–R-009 adoption · R-010–R-014 editor · R-015–R-040 perform 
 R-041–R-056 displays and signal taps · R-057–R-066 canvas and pages ·
 R-067–R-097 design mode · R-098–R-109 themes · R-110–R-124 instance state ·
 R-125–R-136 library · R-137–R-144 import validation · R-145–R-148 keyboard ·
-R-149–R-151 editor and library additions · R-152–R-168 custom element kinds.
+R-149–R-151 editor and library additions · R-152–R-168 custom element kinds ·
+R-169–R-172 event and snapshot taps · R-173–R-174 dimming · R-175 descriptions ·
+R-176 plugin-owned state.
 
 ### R-001 — Embedded developer default
 
@@ -79,10 +81,11 @@ layout containing only the plain parameter.
 ### R-007 — Signal tap declaration
 
 The developer declares each signal tap with a unique name and a kind, audio (1 or 2
-channels, with a capacity in frames from 1,024 to 262,144) or scalar, before the plugin first
-processes audio.
+channels, with a capacity in frames from 1,024 to 262,144), scalar, event (R-169) or snapshot
+(R-171), before the plugin first processes audio.
 Acceptance: declaring "out" (audio, 2 channels, 16,384 frames) and "gr" (scalar) succeeds and
 the editor's tap list holds both with their kinds and channel count.
+Changed by F-001.
 
 ### R-008 — Duplicate tap name refused
 
@@ -316,10 +319,11 @@ Acceptance: pushing 20,000 frames into a 16,384-frame tap that is never read lea
 
 ### R-044 — Tap push allocates nothing
 
-Pushing to an audio or scalar tap never allocates memory, takes a lock or calls the
-operating system.
-Acceptance: pushes run under the allocation checker with zero allocations; review finds no
-lock or system call in the push path.
+Pushing to an audio, scalar or event tap, or publishing to a snapshot tap, never allocates
+memory, takes a lock or calls the operating system.
+Acceptance: pushes and publishes of every tap kind, with and without a reader, run under the
+allocation checker with zero allocations; review finds no lock or system call in their paths.
+Changed by F-001.
 
 ### R-045 — Scalar tap latest and maximum
 
@@ -1040,9 +1044,10 @@ properties.
 A custom kind declares at most 64 properties, each of one type: number (minimum, maximum, step,
 default), choice (2 to 32 named options, default), toggle (default), text (maximum length up to
 4,096 bytes), colour role, typeface role, asset, parameter binding slot (accepting any, stepped
-or two-state parameters) or tap slot (audio or scalar).
+or two-state parameters) or tap slot (audio, scalar, event or snapshot).
 Acceptance: a test kind declaring one property of each of the nine types registers; one
 declaring 65 properties is refused.
+Changed by F-001.
 
 ### R-156 — Inspector from declarations
 
@@ -1139,6 +1144,81 @@ stage's input-to-output curve from the parameter bound to its binding slot.
 Acceptance: the reference plugin's palette offers "Transfer curve"; one placed and bound to
 Drive draws a different curve after Drive changes.
 
+### R-169 — Event tap declaration
+
+The developer declares an event tap with a unique name, a record length of 1 to 16 values and a
+capacity of 64 to 65,536 records, before the plugin first processes audio.
+Acceptance: declaring "grains" (record length 4, capacity 4,096) succeeds and the editor's tap
+list holds it as an event tap of record length 4; record length 17 and capacity 63 are each
+refused and the registry is unchanged.
+
+### R-170 — Event tap push
+
+Pushing a record to an event tap copies it whole when a visible custom element reads the tap and
+returns at once otherwise; a record that does not fit is dropped and counted; a record of the
+wrong length is refused and nothing is copied.
+Acceptance: with no reader, 1,000 pushes leave 0 records copied; with a reader, records
+[1, 2, 3, 4] and [5, 6, 7, 8] pushed between two drains arrive in that order at the next drain
+and none at the one after; 5,000 pushes into a 4,096-record tap that is never drained keep the
+first 4,096 and count 904 dropped; a 3-value push into a record-length-4 tap returns the length
+error.
+
+### R-171 — Snapshot tap
+
+The developer declares a snapshot tap with a unique name and a length of 1 to 1,024 values; a
+publish copies the whole block when a visible custom element reads the tap and returns at once
+otherwise; a reader always gets the latest complete block.
+Acceptance: publishing eight 1s then eight 2s reads eight 2s; while one thread publishes
+1,000,000 blocks whose values all equal a counter and another thread reads continuously, no
+read holds two different values; with no reader, a publish copies nothing.
+
+### R-172 — Custom tap slots of event and snapshot taps
+
+A custom kind declares a tap slot of kind event or snapshot; the tap picker for that slot lists
+only taps of that kind; each frame the element receives the records pushed since the previous
+frame with the count dropped, or the latest block with its sequence number; records pushed
+before the element became visible are never delivered.
+Acceptance: a test kind whose event slot is bound to "grains" receives the 2 records pushed
+between two frames and 0 on the next frame; its snapshot slot bound to "state" receives the
+latest block; the picker for the event slot lists "grains" and not "out", "gr" or "state".
+
+### R-173 — Irrelevant controls dimmed
+
+In perform mode, a control all of whose present bound parameters the developer's relevance rule
+names as irrelevant is drawn at 45 % opacity from the first frame after the value change that
+made it so, and still accepts input.
+Acceptance: with a rule naming "crossTalk" irrelevant unless "mode" is Collision, a knob bound
+to crossTalk is drawn at opacity 0.45 while mode is Clock and at 1.0 on the frame after mode
+becomes Collision; dragging it while dimmed records begin, set, end.
+
+### R-174 — Partly irrelevant controls stay lit
+
+A control bound to several parameters is dimmed only when every present one is irrelevant;
+displays and decorations are never dimmed; design mode dims nothing.
+Acceptance: an XY pad with X irrelevant and Y relevant is drawn at 1.0, and at 0.45 with both
+irrelevant; a label beside a dimmed knob stays at 1.0; in design mode the dimmed knob is drawn
+at 1.0.
+
+### R-175 — Parameter description in the control menu
+
+The developer registers a plain-text description of up to 1,024 bytes for any parameter id; a
+control menu shows the description of the control's first present bound parameter under its
+header.
+Acceptance: with "cutoff" described as "Frequency where the filter starts to cut. Turn it down
+to darken the sound.", right-clicking a knob bound to cutoff opens a menu whose text under the
+header is that sentence and whose entries are still exactly Reset, Type value and Fine adjust;
+a knob bound to an undescribed parameter shows no description line; registering a description
+of 1,025 bytes is refused.
+
+### R-176 — Custom kinds act on plugin-owned state
+
+A custom kind may change state of its plugin that it captured at registration, in response to
+perform-mode input; such changes leave the instance state and the undo history unchanged.
+Acceptance: a test control kind holding a counter captured at registration increments it on
+each perform-mode click and draws its value: three clicks give 3 and the kind draws "3"; the
+encoded instance state and the undo depth are the same before and after the clicks; in design
+mode a click selects the element and leaves the counter at 3.
+
 ## Non-functional requirements
 
 - Platforms: macOS on Apple silicon (aarch64-apple-darwin) is the version 1 gate, tested on
@@ -1163,8 +1243,9 @@ Drive draws a different curve after Drive changes.
 - Package load: decoding and validating a 4 MiB-asset package takes at most 200 ms. Check:
   benchmark over the largest valid fixture.
 - Picker search: results for 2,000 parameters within 16 ms of a keystroke. Check: benchmark.
-- Scalar tap push: at most 100 ns, zero allocations. Audio tap push: zero allocations and no
-  lock, cost linear in the frames pushed. Check: benchmarks and allocation tests.
+- Scalar tap push: at most 100 ns, zero allocations. Audio tap push, event tap push and
+  snapshot tap publish: zero allocations and no lock, cost linear in the values copied. Check:
+  benchmarks and allocation tests.
 - Undo memory: 100 undo steps of a 2,000-element layout with 4 MiB of assets hold at most
   64 MiB. Check: memory measurement test.
 - Accessibility: contrast readout and warnings (R-104, R-105); High Contrast at 7:1 (R-107);
@@ -1243,7 +1324,8 @@ are snake_case. Unknown fields are refused (R-142).
 - **Clipboard text**: a document with `format: "mutable-gui/elements"`, `version`, `elements`
   and `assets`.
 - **Signal tap** (declared by the developer, not stored): `name`, `kind` (`audio` with
-  `channels` 1 | 2 and `capacity` frames, or `scalar`).
+  `channels` 1 | 2 and `capacity` frames, `scalar`, `events` with `record_len` 1–16 values and
+  `capacity` 64–65,536 records, or `snapshot` with `len` 1–1,024 values; F-001).
 - **Custom element kind** (registered by the developer, not stored): `id`, `version`, palette
   `name`, `icon`, `category` (`control` | `display` | `decoration`), declared properties
   (R-155), a draw function, an input function (controls only) and one migration per older

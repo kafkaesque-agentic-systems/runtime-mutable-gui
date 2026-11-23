@@ -49,7 +49,7 @@ Purpose: Play the plugin through its current layout.
 Serves: R-010, R-013, R-014, R-015, R-016, R-017, R-018, R-019, R-020, R-022, R-023, R-025, R-026, R-031, R-032, R-033, R-034, R-035, R-036, R-037, R-038, R-047, R-048, R-049, R-050, R-051, R-052, R-053, R-054, R-058, R-059, R-060, R-061, R-109, R-145, R-146, R-149
 Shows: the current page of the layout drawn in the active theme (here the reference plugin's default on Studio Dark: page tabs, filter, drive, compressor, scope, macro, output); the editor menu button, 24 px, faint until the pointer comes near, in the corner the developer chose (bottom-right by default).
 Actions: drag knobs, faders, XY pads and macros (Shift for fine); click switches, selector entries, page tabs and menu elements; right-click or long press a control → S-03; Tab, arrows and Enter for keyboard use; menu button → S-02.
-States: dragging: a value bubble above the control; focused: an outline in the focus role; modulated: a band in the modulation role from base to modulated value; unbound: disabled role, dashed outline, missing id on the value line; display without its tap: "No signal: <name>"; notices present: a dot on the menu button (S-11). Mockup states: `S-01-perform--states.html`.
+States: dragging: a value bubble above the control; focused: an outline in the focus role; modulated: a band in the modulation role from base to modulated value; unbound: disabled role, dashed outline, missing id on the value line; dimmed (F-002, D-50): the normal look at 45 % opacity, still operable, focus outline at full opacity; display without its tap: "No signal: <name>"; notices present: a dot on the menu button (S-11). Mockup states: `S-01-perform--states.html`.
 Mockup: design/ui/S-01-perform.html
 Built: not yet
 Status: ACCEPTED

@@ -620,3 +620,38 @@ Step 1.26 starts `examples/reference-plugin/tests/common/mod.rs` with `#![cfg(te
 specification's "Code" line gains "tests may unwrap, expect and panic (D-49)". The project
 agents' rule "tests return `Result` and use `?`" becomes this rule. A test failure reports the
 line that failed; library code and the testkit still cannot unwrap.
+
+## D-50 — A dimmed state for controls the plugin calls irrelevant
+
+Status: ACCEPTED
+Date: 2026-11-23 (owner, accepting F-002: "Dimmed, still operable" and "Yes, fold them in")
+Context: Migrating Particle Arp needs about 15 controls drawn faint while the current mode makes
+them do nothing (Cross-Talk outside Collision, Division while Tempo Sync is off). D-43 fixed the
+element states as normal, hover, dragging, focused and unbound. Options were dimmed and still
+operable, dimmed and inert, or hidden.
+Decision: Supersedes D-43 in this part only: element states are normal, hover, dragging,
+focused, unbound and dimmed. A control is dimmed in perform mode when the developer's relevance
+rule names every one of its present bound parameters; it is drawn with its normal look at 45 %
+opacity, changes no colour role, and still takes pointer, keyboard and control-menu input. Its
+focus outline stays at full opacity. Displays, decorations, the tools and design mode are never
+dimmed. The rest of D-43 (generated selectors are dropdowns; "disabled" draws unbound
+elements) stands.
+Consequences: R-173 and R-174; `design/UI.md` S-01 lists the state; the S-12 gallery keeps five
+columns, since dimmed is the Normal column at 45 %.
+
+## D-51 — Custom kinds may own plugin state, never parameters
+
+Status: ACCEPTED
+Date: 2026-11-23 (owner, accepting F-004: "Yes, never parameters" and "Yes, fold them in")
+Context: Particle Arp's scene list, morph pad and CC step editor read and change state that is
+not a host parameter. I-18 lists what the library hands a custom kind, not what the developer
+may give it, so a reviewer could refuse such kinds.
+Decision: A custom kind may hold references to its plugin's own state, captured at registration,
+and read and change it on the editor thread. That state belongs to the plugin: the plugin
+persists it, and it is outside the instance state, undo, packages, the clipboard and the
+library. A kind never changes a host parameter except through its binding slots; a captured
+reference to the plugin's parameters may be read and never written. State the audio thread also
+reads is shared through the plugin's own wait-free structures.
+Consequences: R-176; the developer guide in `README.md` gains "Plugin-owned state"; the reviewer
+agent checks that no custom kind writes a parameter through a captured reference. The library
+cannot enforce the rule.

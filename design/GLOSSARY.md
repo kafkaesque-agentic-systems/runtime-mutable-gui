@@ -36,6 +36,9 @@ use these words.
 - **Developer default**: the layout and theme the plugin developer ships inside the plugin,
   or, when the developer ships none, the layout the library generates from the plugin's
   parameters.
+- **Dimmed**: the look of a control whose parameters have no effect under the plugin's current
+  settings, as the plugin's relevance rule says: drawn faint and still operable. Not to be
+  confused with unbound, where the plugin does not have the parameter at all.
 - **Display**: an element that draws data without being operated: oscilloscope, spectrum,
   level meter, gain-reduction meter, or a custom element kind of the display category.
 - **Editor**: the plugin's window as a whole: the current page of the layout plus the editor
@@ -71,13 +74,22 @@ use these words.
   they use, made to be shared and imported. Its file name ends in `.mgui`.
 - **Page**: one screen of a layout. A layout has one or more pages and the user moves between
   them in perform mode.
+- **Parameter description**: a short text the plugin developer writes for a parameter, shown
+  in that parameter's control menu.
 - **Perform mode**: the state of the editor in which controls change parameters and the
   layout cannot be edited. The editor opens in perform mode.
 - **Reference plugin**: the demonstration plugin in this repository that adopts the library;
   it is how version 1 is shown to work.
-- **Signal tap**: a named stream of data that the plugin's DSP publishes for displays, either
-  audio samples or a single changing number such as gain reduction. The developer declares
-  the taps; the user chooses which display shows which tap.
+- **Plugin-owned state**: state a plugin keeps for itself that is not a host parameter, such
+  as stored scenes or a step pattern. The plugin saves it; the library's undo, packages and
+  library never hold it, though a developer's custom element kind may show and change it.
+- **Relevance rule**: the plugin developer's function that, from the current parameter values,
+  names the parameters that have no effect right now; their controls are drawn dimmed.
+- **Signal tap**: a named stream of data that the plugin's DSP publishes for displays: audio
+  samples, a single changing number such as gain reduction, short records such as one per
+  emitted note (an event tap), or the latest block of numbers describing the plugin's state (a
+  snapshot tap). The developer declares the taps; the user chooses which display shows which
+  tap; event and snapshot taps feed only custom element kinds.
 - **Stepped parameter**: a parameter with a fixed number of values, such as an on/off switch,
   a waveform choice or an integer count. A two-state parameter is a stepped parameter with
   exactly two values.

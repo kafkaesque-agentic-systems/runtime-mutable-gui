@@ -1237,6 +1237,31 @@ recorded as D-48 in `design/DECISIONS.md`.
 - Requirements: R-054
 - Screens: none
 
+### Step 3.18 — Event tap
+
+- Builds: `taps::events` adds `impl TapRegistry { pub fn declare_events(&mut self, name, record_len: u8, capacity: u32) -> Result<EventTapProducer, TapError> }` (record length 1–16 values, capacity 64–65,536 records; the new `TapError::RecordLength`, and `Capacity`, `DuplicateName`, `EmptyName` as Step 3.1, each leaving the registry unchanged) and `TapKind::Events { record_len, capacity }`. The tap is an `rtrb::RingBuffer<f32>` of `record_len × capacity` values with shared `reading: AtomicBool`, `copied: AtomicU64` (records) and `dropped: AtomicU64`. `EventTapProducer::push(&mut self, record: &[f32]) -> Result<(), TapPushError>` returns `TapPushError::Length` and copies nothing when the length is not `record_len`; otherwise one acquire load of `reading`, returning `Ok(())` when false; when true it writes the record whole through `write_chunk_uninit(record_len)` and `fill_from_iter` if `slots() >= record_len`, else adds 1 to `dropped`; it never panics, allocates, locks or calls the system (I-01). `EventTapConsumer` (in `TapReader`) has `set_reading(bool)`, `discard()`, `drain_into(&mut Vec<f32>) -> usize` (records appended oldest first), `take_dropped() -> u64` (swaps in 0) and `copied_records()`. `taps/mod.rs` receives only the `mod` line, the `TapKind` variant and the error variants.
+- Files: `crates/mutable-gui/src/taps/events.rs`, `crates/mutable-gui/src/taps/mod.rs`, `crates/mutable-gui/tests/taps_events.rs`
+- Libraries: rtrb
+- Commands: `cargo test -p mutable-gui --test taps_events`
+- Tests: `crates/mutable-gui/tests/taps_events.rs` (R-169: "grains" with record length 4 and capacity 4,096 is listed as an event tap of record length 4, and record length 17 and capacity 63 are refused with the registry unchanged; R-170 with drains in place of frames: 1,000 pushes with no reader copy 0 records; [1, 2, 3, 4] and [5, 6, 7, 8] arrive in that order at the next drain and none at the one after; 5,000 pushes into a 4,096-record tap keep the first 4,096 and `take_dropped()` returns 904; a 3-value push returns `Length`)
+- Gate: G3.18 — `cargo test -p mutable-gui --test taps_events` exits 0
+- Requirements: R-169, R-170
+- Screens: none
+- Feature: F-001
+
+### Step 3.19 — Snapshot tap and allocation of the new taps
+
+- Builds: `taps::snapshot` adds `impl TapRegistry { pub fn declare_snapshot(&mut self, name, len: u16) -> Result<SnapshotTapProducer, TapError> }` (1–1,024 values; `TapError::Length`) and `TapKind::Snapshot { len }`. The tap holds three slots of `Box<[AtomicU32]>` (f32 bits) with one `AtomicU64` sequence each, and `middle: AtomicU8` holding the middle slot's index with a fresh bit (`0x4`). `SnapshotTapProducer` owns its back index: `publish(&mut self, values: &[f32]) -> Result<(), TapPushError>` returns `Length` on a wrong length; reads `reading` with acquire and returns when false; else stores the values relaxed into the back slot, writes the next sequence into it, and swaps `back | 0x4` into `middle` with `AcqRel`, keeping the returned index as its new back slot. `SnapshotTapConsumer` owns its front index: `latest_into(&mut self, out: &mut [f32]) -> Option<u64>` swaps its front index into `middle` only when the fresh bit is set, then copies the front slot with relaxed loads and returns its sequence, or `None` before the first publish since reading started. No `unsafe` (I-05), no lock, and no loop beyond one per value (I-01). `tests/alloc_taps.rs` gains 1,000 event pushes and 1,000 snapshot publishes, each with and without a reader, under `assert_no_alloc` (R-044).
+- Files: `crates/mutable-gui/src/taps/snapshot.rs`, `crates/mutable-gui/src/taps/mod.rs`, `crates/mutable-gui/tests/taps_snapshot.rs`, `crates/mutable-gui/tests/alloc_taps.rs`
+- Libraries: nice-assert-no-alloc
+- Commands: `cargo test -p mutable-gui --test taps_snapshot --test alloc_taps --test arch_boundaries`
+- Tests: `crates/mutable-gui/tests/taps_snapshot.rs` (R-171: eight 1s then eight 2s read eight 2s; one thread publishing 1,000,000 eight-value blocks whose values all equal a counter while another reads continuously never reads two different values in one block; with no reader a publish copies nothing), `crates/mutable-gui/tests/alloc_taps.rs`
+- Gate: G3.19 — `cargo test -p mutable-gui --test taps_snapshot --test alloc_taps --test arch_boundaries` exits 0
+- Requirements: R-044, R-171
+- Screens: none
+- Feature: F-001
+- Pins: Step 3.4's `alloc_taps.rs` keeps its assertions and gains the new cases; its `arch_boundaries.rs` scans every file under `src/taps/` and holds for the two new ones.
+
 **Exit demo:** Following `README.md` and `docs/RUNBOOK.md`: play audio through Reference FX in Bitwig and watch the scope, level meter and gain-reduction meter follow it; switch pages and see the scope restart; run `cargo test -p mutable-gui --test alloc_taps` and `cargo test -p mutable-gui-reference --test alloc_process` and see zero allocations reported.
 
 ## Phase 4 — Perform mode complete
@@ -1432,7 +1457,7 @@ recorded as D-48 in `design/DECISIONS.md`.
 
 ### Step 4.18 — Phase 4 check sheet
 
-- Builds: `docs/qa/phase-04.md` lists, each with "Result: not run": (1) every control of the reference default works with the mouse; (2) Shift-drag is fine; (3) right-click and a long press on the trackpad open the control menu; Reset, Type value and Fine adjust work; (4) Tab, arrows and Enter work while the window has focus; (5) host modulation of Cutoff shows the band; (6) the pictures `.tickets/.work/ui-compare/S-01.png` and `S-03.png` match their mockups, and `examples/reference-plugin/tests/snapshots/S-12-elements*.png` match `design/ui/S-12-elements*.html` for the built-in rows. It ends with "Signed off: no".
+- Builds: `docs/qa/phase-04.md` lists, each with "Result: not run": (1) every control of the reference default works with the mouse; (2) Shift-drag is fine; (3) right-click and a long press on the trackpad open the control menu; Reset, Type value and Fine adjust work; (4) Tab, arrows and Enter work while the window has focus; (5) host modulation of Cutoff shows the band; (6) the pictures `.tickets/.work/ui-compare/S-01.png` and `S-03.png` match their mockups, and `examples/reference-plugin/tests/snapshots/S-12-elements*.png` match `design/ui/S-12-elements*.html` for the built-in rows; (7) with Drive at 0 dB the Oversample 2× switch is drawn faint and still switches (F-002); (8) Cutoff's control menu shows its description, and after Step 4.25 the S-03 comparison matches the updated mockup (F-003). It ends with "Signed off: no".
 - Files: `docs/qa/phase-04.md`
 - Libraries: none
 - Commands: `grep -q "^Signed off: no" docs/qa/phase-04.md`
@@ -1451,6 +1476,82 @@ recorded as D-48 in `design/DECISIONS.md`.
 - Gate: G4.19 — `grep -q "^Signed off: yes" docs/qa/phase-04.md` exits 0
 - Requirements: R-039
 - Screens: S-01, S-03
+
+### Step 4.20 — Relevance rule evaluation
+
+- Builds: `editor::relevance` defines `ParamValues` (`normalized(&self, id) -> Option<f32>`, `step(&self, id) -> Option<u32>`, the step being `round(base × (values − 1))` for a stepped parameter and `None` otherwise) with an implementation for every `ParamSource`; `Irrelevant`, a `Vec<bool>` indexed by position in `ParamSource::params()`, with `insert(id)` (an id the plugin lacks is ignored), `contains(id)` and `clear()`, reused between evaluations; and `type RelevanceRule = dyn Fn(&dyn ParamValues, &mut Irrelevant) + Send + Sync`. `EditorState::with_relevance(Arc<RelevanceRule>)`. At the start of each perform-mode frame the editor compares every base value with the previous frame's (a reused `Vec<f32>`) and runs the rule when one differs, and on the first frame after `editor_opened`; `EditorState::irrelevant()` returns the set. The rule runs only on the editor thread.
+- Files: `crates/mutable-gui/src/editor/relevance.rs`, `crates/mutable-gui/src/editor/mod.rs`, `crates/mutable-gui/tests/editor_relevance.rs`
+- Libraries: none
+- Commands: `cargo test -p mutable-gui --test editor_relevance`
+- Tests: `crates/mutable-gui/tests/editor_relevance.rs` (a rule naming "crossTalk" unless "mode" is Collision: the set holds crossTalk on the frame after mode becomes Clock and not on the frame after it becomes Collision; a frame with no value change does not call the rule; an unknown id is ignored)
+- Gate: G4.20 — `cargo test -p mutable-gui --test editor_relevance` exits 0
+- Requirements: R-173
+- Screens: none
+- Feature: F-002
+
+### Step 4.21 — Dimmed drawing
+
+- Builds: `ElementView` gains `dimmed: bool`, true in perform mode for a knob, fader, switch, XY pad, macro or selector all of whose present bound parameters are in `irrelevant()` (page tabs and menu elements, which name no parameter value, displays and decorations are never dimmed; design mode dims nothing). `render::draw_element` draws a dimmed element through a clone of the painter with `multiply_opacity(0.45)`, then its focus outline with the full-opacity painter (D-50). `DrawnElement` gains `opacity: f32`. Input is unchanged: a dimmed control still drags, clicks, takes focus and opens its control menu.
+- Files: `crates/mutable-gui/src/render/view.rs`, `crates/mutable-gui/src/render/mod.rs`, `crates/mutable-gui/src/render/drawn.rs`, `crates/mutable-gui/tests/render_dimmed.rs`
+- Libraries: egui
+- Commands: `cargo test -p mutable-gui --test render_dimmed --test editor_perform`
+- Tests: `crates/mutable-gui/tests/render_dimmed.rs` (R-173: the crossTalk knob records opacity 0.45 while mode is Clock and 1.0 on the frame after mode becomes Collision; dragging it while dimmed records begin, set, end; R-174: an XY pad with X irrelevant and Y relevant records 1.0 and with both irrelevant 0.45; a label beside the dimmed knob records 1.0; in design mode the knob records 1.0)
+- Gate: G4.21 — `cargo test -p mutable-gui --test render_dimmed --test editor_perform` exits 0
+- Requirements: R-173, R-174
+- Screens: none
+- Feature: F-002
+- Pins: Step 1.16's `editor_perform.rs` reads other fields of `DrawnElement` and configures no rule; its assertions hold. The S-01, S-03 and S-12 pictures configure no rule and do not change.
+
+### Step 4.22 — Relevance through the adapter and in the reference plugin
+
+- Builds: the adapter builder gains `.relevance(rule: impl Fn(&dyn ParamValues, &mut Irrelevant) + Send + Sync + 'static) -> Self`, passed to `EditorState::with_relevance`. `RefFx` registers a rule naming `oversample` irrelevant while `drive` is at 0 dB (normalized 0). `tests/perf_frame.rs` runs its 300-element page with a rule naming 150 of its 300 fake parameters and keeps the 4 ms bound. Run alone.
+- Files: `crates/mutable-gui-nice/src/builder.rs`, `examples/reference-plugin/src/lib.rs`, `crates/mutable-gui/tests/perf_frame.rs`, `examples/reference-plugin/tests/relevance.rs`
+- Libraries: nice-plug
+- Commands: `cargo test -p mutable-gui-reference --test relevance && cargo test -p mutable-gui --release --test perf_frame perf_`
+- Tests: `examples/reference-plugin/tests/relevance.rs` (on the reference default, the Oversample 2× switch records opacity 0.45 with Drive at 0 dB and 1.0 with Drive at its default 8.8 dB), `crates/mutable-gui/tests/perf_frame.rs`
+- Gate: G4.22 — `cargo test -p mutable-gui-reference --test relevance && cargo test -p mutable-gui --release --test perf_frame perf_` exits 0
+- Requirements: R-173
+- Screens: none
+- Feature: F-002
+- Pins: Step 4.15's `perf_frame.rs` gains the rule; its 4 ms median bound is unchanged. Step 4.12's S-01 pictures use Drive's default 8.8 dB, where Oversample is lit; they do not change.
+
+### Step 4.23 — Description in the control menu
+
+- Builds: `ParamSource` gains the default method `description(&self, id) -> Option<&str>` returning `None`, so existing implementations compile unchanged; the testkit's `FakeParamSource` gains `describe(id, text)`. `perform::control_menu` draws the description of the control's first present bound parameter under its header: Inter 12 px in `--tool-text-muted`, wrapped to the menu's inner width, newlines kept as line breaks, 4 px below the header; the menu still stays inside the window. The entries are unchanged.
+- Files: `crates/mutable-gui/src/params.rs`, `crates/mutable-gui-testkit/src/fake_params.rs`, `crates/mutable-gui/src/perform/control_menu.rs`, `crates/mutable-gui/tests/perform_description.rs`
+- Libraries: egui
+- Commands: `cargo test -p mutable-gui --test perform_description --test perform_control_menu --test fake_params`
+- Tests: `crates/mutable-gui/tests/perform_description.rs` (R-175: with "cutoff" described as "Frequency where the filter starts to cut. Turn it down to darken the sound.", a right-click on a knob bound to cutoff shows that text under the header and exactly the entries Reset, Type value and Fine adjust; a knob bound to an undescribed parameter shows no description)
+- Gate: G4.23 — `cargo test -p mutable-gui --test perform_description --test perform_control_menu --test fake_params` exits 0
+- Requirements: R-175
+- Screens: none
+- Feature: F-003
+- Pins: Step 4.9's `perform_control_menu.rs` and Step 1.4's `fake_params.rs` describe nothing; their assertions hold.
+
+### Step 4.24 — Descriptions through the adapter and in the reference plugin
+
+- Builds: the adapter builder gains `.describe(id: &str, text: &str) -> Result<Self, DescribeError>` (`DescribeError::Empty` for empty or whitespace-only text, `DescribeError::TooLong` above 1,024 bytes); `NiceParamSource` holds the descriptions and answers `description`. `RefFx` describes `cutoff` ("Frequency where the filter starts to cut. Turn it down to darken the sound."), `resonance` ("Boost at the cutoff frequency. High values make the filter ring."), `drive` ("Gain into the saturator. More drive adds harmonics and squashes peaks."), `threshold` ("Level above which the compressor starts to reduce gain.") and `ratio` ("How strongly the compressor reduces gain above the threshold."). The S-03 picture of the menu open on Cutoff is regenerated.
+- Files: `crates/mutable-gui-nice/src/builder.rs`, `crates/mutable-gui-nice/src/params.rs`, `examples/reference-plugin/src/lib.rs`, `crates/mutable-gui-nice/tests/describe.rs`, `examples/reference-plugin/tests/snapshots/S-03-control-menu.png`
+- Libraries: nice-plug, egui_kittest
+- Commands: `cargo test -p mutable-gui-nice --test describe && UPDATE_SNAPSHOTS=1 cargo test -p mutable-gui-reference --test screen_s03 && cargo test -p mutable-gui-reference --test screen_s03`
+- Tests: `crates/mutable-gui-nice/tests/describe.rs` (R-175: a 1,025-byte description is refused with `TooLong`, "   " with `Empty`; a described parameter's `description` returns its text through `NiceParamSource`)
+- Gate: G4.24 — `cargo test -p mutable-gui-nice --test describe && cargo test -p mutable-gui-reference --test screen_s03` exits 0
+- Requirements: R-175
+- Screens: none
+- Feature: F-003
+- Pins: Step 4.13's `screen_s03.rs`: `S-03-control-menu.png` now shows Cutoff's description and is regenerated here; `S-03-control-menu--value.png` and `--error.png` show the value field with the menu closed and do not change; the test's assertions hold.
+
+### Step 4.25 — [OWNER] S-03 mockup with the description
+
+- Builds: the owner runs `/ui-design` for S-03 so that `design/ui/S-03-control-menu.html` shows Cutoff's description ("Frequency where the filter starts to cut. Turn it down to darken the sound.") under the menu header and `design/UI.md` S-03 "Shows" names the description, then runs the comparison and records the result in `docs/qa/phase-04.md` item (8).
+- Files: `design/ui/S-03-control-menu.html`, `design/UI.md`
+- Libraries: none
+- Commands: `python3 tools/devpipe/run.py ui compare S-03`
+- Tests: none
+- Gate: G4.25 — `grep -q "Turn it down to darken the sound" design/ui/S-03-control-menu.html && python3 tools/devpipe/run.py ui compare S-03` exits 0
+- Requirements: R-175
+- Screens: S-03
+- Feature: F-003
 
 **Exit demo:** Following `README.md` and `docs/RUNBOOK.md`: in Bitwig, play every control of Reference FX's default with the mouse, Shift and the keyboard, open the control menu by right-click and by long press, type "1.5k" into Cutoff, reset the macro, and see the modulation band follow Bitwig's modulator on Cutoff.
 
@@ -2058,6 +2159,56 @@ recorded as D-48 in `design/DECISIONS.md`.
 - Requirements: R-168
 - Screens: S-12
 
+### Step 7.16 — Event and snapshot data for custom kinds
+
+- Builds: `PropertyType::Tap` accepts `TapSlotKind::Events` and `TapSlotKind::Snapshot`. `editor::taps` sets the reading flag of an event or snapshot tap only while a custom element whose slot is bound to it is on the current page of an open editor (I-17), calls `discard()` when the flag turns on, drains each event tap once per frame into a reused buffer shared by every element bound to it together with `take_dropped()`, and reads each snapshot tap once per frame with `latest_into` into a reused buffer. `KindContext::tap(slot)` returns `TapData::Events { record_len, records, dropped }` (records drained this frame, oldest first) or `TapData::Snapshot { values, sequence }` for a slot of that kind bound to a tap of that kind, and `None` otherwise.
+- Files: `crates/mutable-gui/src/custom/props.rs`, `crates/mutable-gui/src/editor/taps.rs`, `crates/mutable-gui/src/custom/context.rs`, `crates/mutable-gui/tests/custom_tap_kinds.rs`
+- Libraries: none
+- Commands: `cargo test -p mutable-gui --test custom_tap_kinds --test custom_taps --test editor_taps`
+- Tests: `crates/mutable-gui/tests/custom_tap_kinds.rs` (R-172: a test kind, declared in the test with one event slot and one snapshot slot, bound to "grains" receives the 2 records pushed between two frames and 0 on the next frame; bound to "state" it receives the latest block; records pushed before the element's page was shown are never delivered; I-17: the "grains" flag is set only while the element is on the current page of an open editor)
+- Gate: G7.16 — `cargo test -p mutable-gui --test custom_tap_kinds --test custom_taps --test editor_taps` exits 0
+- Requirements: R-172
+- Screens: none
+- Feature: F-001
+- Pins: Step 7.6's `custom_taps.rs` (audio and scalar slots) and Step 3.7's `editor_taps.rs` keep their assertions. The testkit's `TestKind` keeps its nine properties, so R-156's nine rows hold.
+
+### Step 7.17 — Tap picker for event and snapshot slots
+
+- Builds: the tap picker opened from a custom slot of kind event or snapshot lists only taps of that kind, each with its record length ("4 values per record") or length ("64 values"), the current tap checked, and the footer "Only event taps are listed: this slot reads events." or "Only snapshot taps are listed: this slot reads a snapshot."; a click binds as one `ReplaceElement`.
+- Files: `crates/mutable-gui/src/design/tap_picker.rs`, `crates/mutable-gui/tests/custom_tap_picker.rs`
+- Libraries: egui
+- Commands: `cargo test -p mutable-gui --test custom_tap_picker --test design_tap_picker`
+- Tests: `crates/mutable-gui/tests/custom_tap_picker.rs` (R-172: with taps "out", "gr", "grains" and "state", the picker of an event slot lists "grains" only; binding it is undone by one undo)
+- Gate: G7.17 — `cargo test -p mutable-gui --test custom_tap_picker --test design_tap_picker` exits 0
+- Requirements: R-172
+- Screens: none
+- Feature: F-001
+- Pins: Step 5.16's `design_tap_picker.rs` covers built-in displays, whose lists are unchanged; its assertions hold.
+
+### Step 7.18 — Custom controls drawn dimmed
+
+- Builds: a custom element of category control is dimmed in perform mode when every present parameter bound in its binding slots is in `irrelevant()`; `render::custom` then draws it through the painter with `multiply_opacity(0.45)` (D-50), and `KindContext::dimmed() -> bool` tells the kind.
+- Files: `crates/mutable-gui/src/render/custom.rs`, `crates/mutable-gui/src/custom/context.rs`, `crates/mutable-gui/tests/custom_dimmed.rs`
+- Libraries: egui
+- Commands: `cargo test -p mutable-gui --test custom_dimmed`
+- Tests: `crates/mutable-gui/tests/custom_dimmed.rs` (R-173: `TestKind` with its binding slot on a parameter the rule names records opacity 0.45 and `dimmed()` true, and still counts a perform-mode click; with the parameter relevant, 1.0 and false)
+- Gate: G7.18 — `cargo test -p mutable-gui --test custom_dimmed` exits 0
+- Requirements: R-173
+- Screens: none
+- Feature: F-002
+
+### Step 7.19 — Plugin-owned state in custom kinds
+
+- Builds: the testkit's `StatefulKind` (`org.example.counter`, version 1, category control, no properties) holds an `Arc<AtomicU32>` given at construction, adds 1 on each perform-mode click in `input`, and draws the count in the body typeface. `README.md`'s developer guide gains "Plugin-owned state": the rule of D-51, the morph-pad example (scenes in the plugin's own `#[persist]` field, read by the kind, changed by Store and Reset), and that such state is outside mutable-gui's undo, packages and library. The reviewer agent's "What this project has decided (not findings)" gains: "A custom kind may hold and change its plugin's own non-parameter state (D-51); a kind writing a parameter through a captured reference is a finding."
+- Files: `crates/mutable-gui-testkit/src/stateful_kind.rs`, `crates/mutable-gui-testkit/src/lib.rs`, `crates/mutable-gui/tests/custom_plugin_state.rs`, `README.md`, `.claude/agents/runtime-mutable-gui-reviewer.md`
+- Libraries: egui
+- Commands: `cargo test -p mutable-gui --test custom_plugin_state && grep -q "Plugin-owned state" README.md && grep -q "D-51" .claude/agents/runtime-mutable-gui-reviewer.md`
+- Tests: `crates/mutable-gui/tests/custom_plugin_state.rs` (R-176: three perform-mode clicks make the counter 3 and the kind draws "3"; `cell.load()` and the undo depth are equal before and after the clicks; a design-mode click selects the element and leaves the counter at 3)
+- Gate: G7.19 — `cargo test -p mutable-gui --test custom_plugin_state && grep -q "Plugin-owned state" README.md && grep -q "D-51" .claude/agents/runtime-mutable-gui-reviewer.md` exits 0
+- Requirements: R-176
+- Screens: none
+- Feature: F-004
+
 **Exit demo:** Following `README.md` and `docs/RUNBOOK.md`: in Bitwig, add a Transfer curve from the palette's "Reference FX" section, bind it to Drive, move Drive and watch the curve change, edit its colour and grid, undo, save and reopen the project.
 
 ## Phase 8 — Library, packages and defaults
@@ -2530,7 +2681,7 @@ recorded as D-48 in `design/DECISIONS.md`.
 | G1.18 | 1 | `cargo test -p mutable-gui --test editor_window` |
 | G1.19 | 1 | `cargo test -p mutable-gui --test chrome_menu_button` |
 | G1.20 | 1 | `cargo test -p mutable-gui --test chrome_editor_menu` |
-| G1.21 | 1 | `cargo test -p mutable-gui-nice --features testing --test params` |
+| G1.21 | 1 | `cargo test -p mutable-gui-nice --test params` |
 | G1.22 | 1 | `cargo test -p mutable-gui-nice --test persist` |
 | G1.23 | 1 | `cargo test -p mutable-gui-nice --test builder` |
 | G1.24 | 1 | `cargo test -p mutable-gui-reference --test params` |
@@ -2576,6 +2727,8 @@ recorded as D-48 in `design/DECISIONS.md`.
 | G3.15 | 3 | `grep -q "declare_audio" README.md && grep -q "I-17" docs/ARCHITECTURE.md && ! grep -q "[<][<]" README.md docs/ARCHITECTURE.md docs/TESTING.md CHANGELOG.md` |
 | G3.16 | 3 | `grep -q "^Signed off: no" docs/qa/phase-03.md` |
 | G3.17 | 3 | `grep -q "^Signed off: yes" docs/qa/phase-03.md` |
+| G3.18 | 3 | `cargo test -p mutable-gui --test taps_events` |
+| G3.19 | 3 | `cargo test -p mutable-gui --test taps_snapshot --test alloc_taps --test arch_boundaries` |
 | G4.1 | 4 | `cargo test -p mutable-gui --test perform_fader` |
 | G4.2 | 4 | `cargo test -p mutable-gui --test perform_fine` |
 | G4.3 | 4 | `cargo test -p mutable-gui --test perform_xy` |
@@ -2595,6 +2748,12 @@ recorded as D-48 in `design/DECISIONS.md`.
 | G4.17 | 4 | `grep -q "I-04" docs/ARCHITECTURE.md && grep -q "long press" README.md && ! grep -q "[<][<]" README.md docs/ARCHITECTURE.md docs/TESTING.md CHANGELOG.md` |
 | G4.18 | 4 | `grep -q "^Signed off: no" docs/qa/phase-04.md` |
 | G4.19 | 4 | `grep -q "^Signed off: yes" docs/qa/phase-04.md` |
+| G4.20 | 4 | `cargo test -p mutable-gui --test editor_relevance` |
+| G4.21 | 4 | `cargo test -p mutable-gui --test render_dimmed --test editor_perform` |
+| G4.22 | 4 | `cargo test -p mutable-gui-reference --test relevance && cargo test -p mutable-gui --release --test perf_frame perf_` |
+| G4.23 | 4 | `cargo test -p mutable-gui --test perform_description --test perform_control_menu --test fake_params` |
+| G4.24 | 4 | `cargo test -p mutable-gui-nice --test describe && cargo test -p mutable-gui-reference --test screen_s03` |
+| G4.25 | 4 | `grep -q "Turn it down to darken the sound" design/ui/S-03-control-menu.html && python3 tools/devpipe/run.py ui compare S-03` |
 | G5.1 | 5 | `cargo test -p mutable-gui --test edit_apply` |
 | G5.2 | 5 | `cargo test -p mutable-gui --test edit_undo` |
 | G5.3 | 5 | `cargo test -p mutable-gui --test undo_memory` |
@@ -2647,6 +2806,10 @@ recorded as D-48 in `design/DECISIONS.md`.
 | G7.13 | 7 | `grep -q "register_kind" README.md && grep -q "I-20" docs/ARCHITECTURE.md && ! grep -q "[<][<]" README.md docs/ARCHITECTURE.md CHANGELOG.md` |
 | G7.14 | 7 | `grep -q "^Signed off: no" docs/qa/phase-07.md` |
 | G7.15 | 7 | `grep -q "^Signed off: yes" docs/qa/phase-07.md` |
+| G7.16 | 7 | `cargo test -p mutable-gui --test custom_tap_kinds --test custom_taps --test editor_taps` |
+| G7.17 | 7 | `cargo test -p mutable-gui --test custom_tap_picker --test design_tap_picker` |
+| G7.18 | 7 | `cargo test -p mutable-gui --test custom_dimmed` |
+| G7.19 | 7 | `cargo test -p mutable-gui --test custom_plugin_state && grep -q "Plugin-owned state" README.md && grep -q "D-51" .claude/agents/runtime-mutable-gui-reviewer.md` |
 | G8.1 | 8 | `cargo test -p mutable-gui --test library_storage` |
 | G8.2 | 8 | `cargo test -p mutable-gui --test library_paths` |
 | G8.3 | 8 | `cargo test -p mutable-gui --test library_listing` |
