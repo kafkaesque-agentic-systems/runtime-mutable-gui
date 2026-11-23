@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-04 Design-mode workspace — several selected, Arrange open</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div style="position:absolute;left:508px;top:84px;width:156px;height:216px;border:1px dashed var(--tool-accent)"></div>
+  <div class="pill accent" style="position:absolute;left:540px;top:308px">4 selected</div>
+  <div class="reserved" style="right:0;bottom:0"></div>
+  <div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn on" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon" data-icon="group" title="Group ⌘G"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised" data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn" data-icon="warn" style="color:var(--tool-warning)">1</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon" data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="menu pop" style="left:262px;top:48px;width:232px">
+    <div class="grp">Align to selection</div>
+    <div class="row" style="padding:0 4px"><span class="btn icon hover" data-icon="alignL"></span><span class="btn icon" data-icon="alignCH"></span><span class="btn icon" data-icon="alignR"></span><span class="btn icon" data-icon="alignT"></span><span class="btn icon" data-icon="alignCV"></span><span class="btn icon" data-icon="alignB"></span></div>
+    <div class="grp">Distribute</div>
+    <div class="li"><span data-icon="distH"></span>Horizontally<span class="sp"></span><span class="kbd">needs 3</span></div>
+    <div class="li"><span data-icon="distV"></span>Vertically<span class="sp"></span></div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="group"></span>Group<span class="sp"></span><span class="kbd">⌘G</span></div>
+    <div class="li dis"><span data-icon="ungroup"></span>Ungroup<span class="sp"></span><span class="kbd">⇧⌘G</span></div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="front"></span>Bring to front<span class="sp"></span><span class="kbd">⇧⌘]</span></div>
+    <div class="li"><span data-icon="front"></span>Bring forward<span class="sp"></span><span class="kbd">⌘]</span></div>
+    <div class="li"><span data-icon="back"></span>Send backward<span class="sp"></span><span class="kbd">⌘[</span></div>
+    <div class="li"><span data-icon="back"></span>Send to back<span class="sp"></span><span class="kbd">⇧⌘[</span></div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="copy"></span>Duplicate<span class="sp"></span><span class="kbd">⌘D</span></div>
+    <div class="li"><span data-icon="trash"></span>Delete<span class="sp"></span><span class="kbd">⌫</span></div>
+  </div>
+</div>
+<script>
+  window.mgReady = function () {
+    MG.stage({ design: true, grid: true, selected: ["thresh", "ratio", "attack", "release"], states: { envamt: { state: "unbound", missing: "env_amount" } } });
+    document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" });
+  };
+</script>
+</body>
+</html>

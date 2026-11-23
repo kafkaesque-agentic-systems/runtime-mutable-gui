@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="752x436">
+<title>S-13 Generated default layout</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:752px;height:436px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+</div>
+<script>
+  /* Generated from the parameter tree (R-003–R-006): one page per top-level group, 8 columns of
+     88 × 116 cells from y = 64, 24-unit margins; canvas sized for the largest page (3 rows).
+     Knobs 72 × 100 centred in a cell; switches and selectors (always dropdowns) carry a label element above. */
+  window.mgReady = function () {
+    const els = [
+      { id: "title", kind: "label", x: 24, y: 16, w: 200, h: 28, text: "Reference FX", typeface: "heading", size: 14 },
+      { id: "tabs", kind: "page_tabs", x: 232, y: 16, w: 496, h: 30, pages: ["Reference FX", "Filter", "Drive", "Compressor", "Modulation", "Output"], current: 4 },
+    ];
+    const params = [
+      ["knob", "LFO 1 Rate", "2.40 Hz", 0.42], ["knob", "LFO 1 Depth", "35 %", 0.35], ["selector", "LFO 1 Shape", ["Sin", "Tri", "Saw", "Sq"], 0], ["switch", "LFO 1 Sync", true],
+      ["knob", "LFO 2 Rate", "0.80 Hz", 0.25], ["knob", "LFO 2 Depth", "12 %", 0.12], ["selector", "LFO 2 Shape", ["Sin", "Tri", "Saw", "Sq"], 2], ["switch", "LFO 2 Sync", false],
+      ["knob", "Env Attack", "12 ms", 0.2], ["knob", "Env Release", "340 ms", 0.55], ["knob", "Env Amount", "+40 %", 0.7], ["knob", "Mod Smooth", "5 ms", 0.1],
+    ];
+    params.forEach(([kind, name, a, b], i) => {
+      const col = i % 8, row = Math.floor(i / 8), cx = 24 + col * 88, cy = 64 + row * 116;
+      if (kind === "knob") els.push({ id: "p" + i, kind: "knob", x: cx + 8, y: cy + 8, w: 72, h: 100, label: name, text: a, value: b });
+      if (kind === "switch") { els.push({ id: "l" + i, kind: "label", x: cx + 4, y: cy + 30, w: 80, h: 18, text: name, size: 11, align: "centre" }); els.push({ id: "p" + i, kind: "switch", x: cx + 26, y: cy + 54, w: 40, h: 28, label: "", on: a }); }
+      if (kind === "selector") { els.push({ id: "l" + i, kind: "label", x: cx + 4, y: cy + 30, w: 80, h: 18, text: name, size: 11, align: "centre" }); els.push({ id: "p" + i, kind: "selector", presentation: "dropdown", x: cx + 4, y: cy + 54, w: 80, h: 26, options: ["Sine", "Triangle", "Saw", "Square"], selected: b }); }
+    });
+    MG.stage({ layout: { canvas: [752, 436], elements: els } });
+    document.getElementById("mb").outerHTML = MG.menuButton({ state: "faint" });
+  };
+</script>
+</body>
+</html>

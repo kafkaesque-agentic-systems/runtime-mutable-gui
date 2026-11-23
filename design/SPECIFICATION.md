@@ -27,7 +27,8 @@ and shareable as a file, so the developer ships only DSP, a parameter tree and a
 Ranges: R-001–R-009 adoption · R-010–R-014 editor · R-015–R-040 perform mode ·
 R-041–R-056 displays and signal taps · R-057–R-066 canvas and pages ·
 R-067–R-097 design mode · R-098–R-109 themes · R-110–R-124 instance state ·
-R-125–R-136 library · R-137–R-144 import validation · R-145–R-148 keyboard.
+R-125–R-136 library · R-137–R-144 import validation · R-145–R-148 keyboard ·
+R-149–R-151 editor and library additions · R-152–R-168 custom element kinds.
 
 ### R-001 — Embedded developer default
 
@@ -943,7 +944,8 @@ up to 1)".
 
 ### R-142 — Unknown fields refused
 
-A document holding a field its schema version does not define is refused.
+A document holding a field its schema version does not define is refused, except inside the
+stored properties of an unknown element (R-164).
 Acceptance: a package with an extra top-level field "script" is refused with a notice naming
 "script".
 
@@ -985,6 +987,157 @@ of "0".
 Escape closes an open menu or value field without changing any value.
 Acceptance: open a value field, type "5", press Escape: the parameter is unchanged and the
 field is closed.
+
+### R-149 — Menu button corner set by the developer
+
+A developer option places the editor menu button in one of the four corners of the window, 8
+pixels from both edges; without the option it is in the bottom-right corner.
+Acceptance: with the option set to top-left the button's top-left corner is at (8, 8) logical
+pixels; with no option its bottom-right corner is 8 pixels from the window's bottom-right.
+
+### R-150 — Reset to developer default always offered
+
+The editor menu offers "Reset to developer default" in perform mode, in design mode, when the
+developer has switched design mode off, and while an unreadable saved layout is kept, where
+choosing it first asks to discard that layout.
+Acceptance: the entry is present in the editor menu in each of the four states; in the last,
+choosing it opens the discard confirmation.
+
+### R-151 — Developer default in the library
+
+The library's layout list always begins with a read-only "Developer default" entry that can be
+applied and exported but not overwritten or deleted.
+Acceptance: an empty library lists exactly one layout entry, "Developer default", with no
+delete action; saving a layout named "Developer default" asks for another name.
+
+### R-152 — Register a custom element kind
+
+Before the editor first opens, the developer registers each custom element kind with the
+library, giving its id, version (an integer from 1), palette name, icon, category (control,
+display or decoration) and declared properties.
+Acceptance: registering a test kind "org.example.curve" version 1 succeeds and the kind
+registry lists it with its name, category and properties.
+
+### R-153 — Custom kind ids
+
+A custom kind id is 3 to 64 characters of lowercase letters, digits, dots, hyphens and
+underscores with at least one dot; registering an id already registered or not of that form
+returns an error and changes nothing.
+Acceptance: registering "org.example.curve" twice fails the second time; registering "knob"
+fails; the registry is unchanged after both failures.
+
+### R-154 — Custom kinds in the palette
+
+Registered custom kinds appear in the design palette after the built-in kinds, in a section
+named after the plugin, with their palette names and icons; choosing one adds an element of
+that kind as in R-069.
+Acceptance: with one registered kind, the palette shows a section "Reference FX" holding it,
+and choosing it adds one element of that kind at the canvas centre with its default
+properties.
+
+### R-155 — Declared property types
+
+A custom kind declares at most 64 properties, each of one type: number (minimum, maximum, step,
+default), choice (2 to 32 named options, default), toggle (default), text (maximum length up to
+4,096 bytes), colour role, typeface role, asset, parameter binding slot (accepting any, stepped
+or two-state parameters) or tap slot (audio or scalar).
+Acceptance: a test kind declaring one property of each of the nine types registers; one
+declaring 65 properties is refused.
+
+### R-156 — Inspector from declarations
+
+Selecting a custom element shows its declared properties in the inspector, below its frame,
+each with the editor for its type.
+Acceptance: selecting an element of the nine-type test kind shows nine property rows whose
+editors match their types.
+
+### R-157 — Custom properties validated
+
+A custom element whose stored properties do not match its registered kind's declarations (a
+number outside its range, an unknown choice, text too long, an unknown role, a missing or
+extra property) fails validation like any invalid document.
+Acceptance: importing a package with a curve element whose number property is above its
+maximum is refused with a notice naming that property, and nothing changes (R-143).
+
+### R-158 — Custom property edits undoable
+
+Every edit of a custom element's property in the inspector is one undoable change.
+Acceptance: changing a number property and pressing undo once restores its previous value.
+
+### R-159 — Custom element drawing
+
+Each frame, the library asks each custom element on the current page to draw itself, giving it
+its frame, its properties, the current base and modulated values of its bound parameters, the
+data of its tap slots and the active theme; the element may draw anything inside the canvas.
+Acceptance: a test kind that fills its frame with the colour of its colour-role property draws
+that colour over its frame in the harness.
+
+### R-160 — Custom elements follow the theme
+
+A custom element receives the colours, typefaces and shape tokens of the active theme, so a
+theme switch changes it on the next frame.
+Acceptance: after a theme switch, the test kind of R-159 draws the new theme's colour for the
+same role.
+
+### R-161 — Custom element input
+
+In perform mode, pointer and keyboard input over a custom element of category control goes to
+its kind; in design mode, and for displays and decorations, it never does.
+Acceptance: a test control kind counting clicks counts one per perform-mode click and none in
+design mode.
+
+### R-162 — Custom gestures through the library
+
+A custom element changes a parameter only through begin, set and end on one of its binding
+slots, and the library ends every gesture the element began and did not end when the pointer
+is released or the editor closes.
+Acceptance: a test kind that begins a gesture and never ends it records an end on pointer
+release.
+
+### R-163 — Custom tap reading
+
+A custom element receives signal data only from the taps bound to its tap slots, and only of
+each slot's kind.
+Acceptance: a test kind whose audio tap slot is bound to "out" receives the samples pushed to
+"out"; the tap picker for that slot does not list the scalar tap "gr".
+
+### R-164 — Unknown element kept
+
+An element whose kind is not registered in this plugin, or whose kind version is newer than the
+registered one, is kept unchanged in the layout and drawn as a placeholder showing "Unknown
+element" and its kind id.
+Acceptance: loading a layout holding an "org.vendor.wavetable" element into a plugin without
+that kind, then saving, gives that element's stored kind, version and properties unchanged,
+and the harness draws the placeholder text.
+
+### R-165 — Unknown element editing
+
+In design mode an unknown element can be selected, moved, resized, reordered, duplicated and
+deleted, but its properties cannot be edited.
+Acceptance: moving an unknown element changes its frame; its inspector shows its kind id and
+version and no property editors.
+
+### R-166 — Unknown elements listed
+
+Unknown elements appear in the unbound list with their kind id.
+Acceptance: a layout with one unknown element lists it in the unbound list by kind id, and
+choosing the entry selects it.
+
+### R-167 — Custom kind migration
+
+An element saved with an older version of a registered kind is converted on load by the
+developer's migration for that kind; if the migration fails, the element is kept as an unknown
+element.
+Acceptance: a version-1 element of a kind registered at version 2 loads as version 2 through the
+test migration; a migration returning an error leaves it unknown with its version-1
+properties intact.
+
+### R-168 — Reference plugin custom kind
+
+The reference plugin registers one custom kind, "Transfer curve", a display that draws its drive
+stage's input-to-output curve from the parameter bound to its binding slot.
+Acceptance: the reference plugin's palette offers "Transfer curve"; one placed and bound to
+Drive draws a different curve after Drive changes.
 
 ## Non-functional requirements
 
@@ -1061,6 +1214,11 @@ are snake_case. Unknown fields are refused (R-142).
   - image: `asset` (asset id), `fit` (`contain` | `cover` | `stretch`).
   - group: `children` (list of Element, nesting ≤ 16). Element counts (R-066, R-139)
     include groups and every member at any depth.
+  - a custom kind (any `kind` containing a dot): `kind_version` (integer from 1) and `props`
+    (property name → value: a number, a string, a boolean, a role name, an asset id, a
+    Binding, or a tap name, as the kind declares). For an unknown element (R-164) `props` is
+    kept exactly as stored; the unknown-field rule (R-142) does not apply inside it, but the
+    nesting (16) and text (4,096 bytes) limits do.
 - **Binding**: `param` (the plugin's stable string parameter id), `min` and `max`
   (normalized 0–1, min < max), `reversed` (bool).
 - **Theme** (`format: "mutable-gui/theme"`): `name`, `colours` (every colour role → RGBA
@@ -1081,14 +1239,18 @@ are snake_case. Unknown fields are refused (R-142).
   and `assets`.
 - **Signal tap** (declared by the developer, not stored): `name`, `kind` (`audio` with
   `channels` 1 | 2 and `capacity` frames, or `scalar`).
+- **Custom element kind** (registered by the developer, not stored): `id`, `version`, palette
+  `name`, `icon`, `category` (`control` | `display` | `decoration`), declared properties
+  (R-155), a draw function, an input function (controls only) and one migration per older
+  version.
 
 Identifiers that never change once version 1 is released: the format names above; schema
 version numbers (an integer per format, starting at 1, raised for every change); the file
 extension `.mgui`; the persisted-field key `mutable-gui`; the library folder names
 `mutable-gui`, `layouts`, `themes`; the colour role, surface role, element kind and field
 names of version 1; the built-in theme ids `studio-dark`, `studio-light`, `high-contrast`.
-Parameter ids, tap names and the CLAP id belong to the plugin developer, who must keep them
-stable.
+Parameter ids, tap names, custom kind ids, custom property names and the CLAP id belong to the
+plugin developer, who must keep them stable.
 
 ## Edge cases
 
@@ -1120,6 +1282,13 @@ stable.
   history.
 - The host loads state into an instance whose editor is closed: the state is decoded when the
   editor next opens.
+- A package from plugin A containing A's custom elements is imported into plugin B: the
+  custom elements become unknown elements (R-164) and the cross-plugin notice names A
+  (R-131).
+- A developer removes a custom kind in a plugin update: its elements in saved layouts become
+  unknown elements and appear in the unbound list.
+- Custom element code panics or runs slowly: the library does not contain it; the editor may
+  stall or the host may stop the plugin (see Out of scope).
 
 ## Out of scope
 
@@ -1134,7 +1303,14 @@ stable.
 - Testing in a host on Linux or Windows.
 - Online sharing, accounts or any network feature.
 - Scripts, expressions or custom code inside layouts, themes or packages.
-- Third-party element types supplied by plugins or users.
+- Element kinds supplied by users or packages; only plugin developers register kinds, as Rust
+  code compiled into the plugin.
+- Redrawing the built-in element kinds; a developer who wants a different knob registers a
+  custom kind.
+- Image-skin (filmstrip) controls.
+- Hiding built-in kinds from the palette.
+- Restyling the library's own tools (editor menu, design panels, dialogs, notices).
+- Protecting the host from a panic or hang in a developer's custom element code.
 - Raw colours on individual elements.
 - Responsive layouts that reflow with window shape, and canvases per page.
 - Animations and transitions.

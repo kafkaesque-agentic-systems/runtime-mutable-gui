@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-01 Perform mode — states: focus, drag, unbound, no signal, menu button near the pointer</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+</div>
+<script>window.mgReady = function () {
+  MG.stage({ states: { reso: { state: "focused" }, drive: { state: "dragging", value: 0.52, text: "10.4 dB" }, envamt: { state: "unbound", missing: "env_amount" }, scope: { state: "unbound", tap: "pre" }, ratio: { state: "hover" } } });
+  document.getElementById("mb").outerHTML = MG.menuButton({ state: "" });
+};</script>
+</body>
+</html>

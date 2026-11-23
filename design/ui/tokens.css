@@ -1,0 +1,132 @@
+/* Design tokens: mutable-gui.
+   Two layers, as in the product:
+   1. --tool-*  : the library's own fixed tool style (editor menu, design panels, dialogs,
+                  control menu, notices). Never follows the user's theme; every text pair
+                  is at least 7:1. Sizes are physical (CSS px = logical px at scale 1)
+                  and do not scale with the canvas.
+   2. --role-*  : the colour roles, typefaces and shape tokens of a THEME, which the
+                  layout's elements draw with. :root holds Studio Dark (the theme of
+                  generated defaults); .theme-studio-light and .theme-high-contrast
+                  override it. The built-in themes are written from these values.
+   The mockups render with the system UI font standing in for Inter, which is not
+   installed on the design machine; the product bundles Inter 4.1. */
+:root {
+  /* ---------- tool style (fixed) ---------- */
+  --tool-bg: #17181B;            /* panels, menus, dialogs */
+  --tool-bg-raised: #222329;     /* fields, list rows, segmented controls */
+  --tool-bg-hover: #2B2D34;      /* hovered row or button */
+  --tool-outline: #3A3D45;       /* panel edges, field borders */
+  --tool-text: #ECEDEF;          /* 15.2:1 on bg, 11.7:1 on hover */
+  --tool-text-muted: #BEC1C8;    /* 9.9:1 on bg, 7.6:1 on hover */
+  --tool-accent: #5AABFF;        /* selection, focus, primary action: 7.4:1 on bg */
+  --tool-on-accent: #0B0C0E;     /* text on accent: 8.1:1 */
+  --tool-warning: #F5B841;       /* 10.0:1 on bg */
+  --tool-danger: #FF7A7A;        /* 7.0:1 on bg */
+  --tool-scrim: rgba(8, 9, 11, 0.55);
+  --tool-handle: #FFFFFF;
+  --tool-guide: #FF5FD2;         /* snap and alignment guides */
+  --tool-grid: rgba(255, 255, 255, 0.07);
+  --tool-reserved: rgba(90, 171, 255, 0.18); /* hatched menu-button corner */
+
+  --tool-font: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --tool-font-mono: "Hack", ui-monospace, "SF Mono", Menlo, monospace;
+  --tool-size-sm: 11px;
+  --tool-size-md: 12px;
+  --tool-size-lg: 13px;
+  --tool-weight-medium: 560;
+
+  --tool-space-1: 4px;
+  --tool-space-2: 8px;
+  --tool-space-3: 12px;
+  --tool-space-4: 16px;
+  --tool-row: 24px;              /* minimum hit target */
+  --tool-bar: 36px;              /* toolbar height */
+  --tool-rail: 44px;             /* palette rail width */
+  --tool-inspector: 264px;       /* inspector width */
+  --tool-radius-sm: 4px;
+  --tool-radius-md: 6px;
+  --tool-radius-lg: 10px;
+  --tool-shadow: 0 6px 24px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --tool-menu-button: 24px;
+
+  --duration-quick: 90ms;
+  --duration-standard: 160ms;
+
+  /* ---------- theme: Studio Dark (default) ---------- */
+  --role-background: #101114;
+  --role-surface: #1A1C20;
+  --role-surface-raised: #24272C;
+  --role-border: #33363D;
+  --role-text: #E6E7EA;          /* 13.8:1 on surface */
+  --role-text-muted: #A3A7B0;    /* 7.1:1 on surface, 6.2:1 on raised */
+  --role-accent-1: #FF9F43;
+  --role-accent-2: #5AABFF;
+  --role-accent-3: #FF5C7A;
+  --role-accent-4: #3DDC97;
+  --role-accent-5: #B48CFF;
+  --role-accent-6: #FFD166;
+  --role-accent-7: #2EC4D6;
+  --role-accent-8: #F78FB3;
+  --role-positive: #3DDC97;
+  --role-warning: #FFB020;
+  --role-negative: #FF5C5C;
+  --role-modulation: #6EE7F9;
+  --role-focus: #7CC4FF;         /* 9.1:1 on surface */
+  --role-disabled: #5A5E66;
+
+  --role-font-body: var(--tool-font);
+  --role-font-heading: var(--tool-font);
+  --role-font-value: var(--tool-font-mono);
+  --role-radius: 8px;
+  --role-border-width: 1px;
+  --role-track: 4px;
+  --role-handle: 14px;
+}
+
+.theme-studio-light {
+  --role-background: #E6E7EA;
+  --role-surface: #F4F4F5;
+  --role-surface-raised: #FFFFFF;
+  --role-border: #C9CBD0;
+  --role-text: #16171A;          /* 16.3:1 on surface */
+  --role-text-muted: #50545C;    /* 6.1:1 on background */
+  --role-accent-1: #D9640A;
+  --role-accent-2: #1F6FD1;
+  --role-accent-3: #D2344F;
+  --role-accent-4: #16935E;
+  --role-accent-5: #7B52D6;
+  --role-accent-6: #B88600;
+  --role-accent-7: #0E8C9C;
+  --role-accent-8: #C2457A;
+  --role-positive: #16935E;
+  --role-warning: #B87300;
+  --role-negative: #D23434;
+  --role-modulation: #0E8C9C;
+  --role-focus: #1F6FD1;         /* 4.0:1 on background */
+  --role-disabled: #A4A8B0;
+}
+
+.theme-high-contrast {
+  --role-background: #000000;
+  --role-surface: #0A0A0A;
+  --role-surface-raised: #161616;
+  --role-border: #FFFFFF;
+  --role-text: #FFFFFF;          /* 18.1:1 or more on every background role */
+  --role-text-muted: #E3E3E3;    /* 14.1:1 or more */
+  --role-accent-1: #FFD400;
+  --role-accent-2: #00E5FF;
+  --role-accent-3: #FF5FD2;
+  --role-accent-4: #7CFF4F;
+  --role-accent-5: #C9A8FF;
+  --role-accent-6: #FFFFFF;
+  --role-accent-7: #00E5FF;
+  --role-accent-8: #FF9EC4;
+  --role-positive: #7CFF4F;
+  --role-warning: #FFD400;
+  --role-negative: #FF6B6B;
+  --role-modulation: #00E5FF;
+  --role-focus: #FFD400;         /* 13.8:1 on surface */
+  --role-disabled: #8A8A8A;
+  --role-border-width: 2px;
+  --role-track: 6px;
+}

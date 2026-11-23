@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-03 Control menu — typing a value</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="pop" style="left:30px;top:172px;width:120px">
+    <div class="field focus" style="height:24px"><span class="mono" style="font-size:12px">2.5k</span><span style="width:1px;height:14px;background:var(--tool-text)"></span></div>
+    <div class="muted" style="font-size:10.5px;margin-top:3px;text-align:center">↩ set · esc cancel</div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ states: { cutoff: { state: "focused", text: " " } } }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "faint" }); };</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-10 Library dialog — save a layout</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+<style>
+  .lib { position: absolute; left: 110px; top: 50px; width: 620px; height: 420px; display: grid; grid-template-rows: auto auto 1fr auto; }
+  .tabs2 { display: flex; gap: 2px; padding: 6px 10px; border-bottom: 1px solid var(--tool-outline); }
+  .tabs2 span { height: 26px; padding: 0 10px; border-radius: 5px; display: inline-flex; align-items: center; gap: 6px; color: var(--tool-text-muted); }
+  .tabs2 span.on { background: var(--tool-bg-raised); color: var(--tool-text); }
+  .body2 { display: grid; grid-template-columns: 1fr 236px; min-height: 0; }
+  .body2 .list { padding: 6px; border-right: 1px solid var(--tool-outline); overflow: hidden; }
+  .detail { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .thumb { height: 112px; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid var(--tool-outline); background: var(--role-background); }
+  .badge2 { height: 18px; padding: 0 7px; border-radius: 9px; font-size: 10.5px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--tool-outline); color: var(--tool-text-muted); }
+  .badge2.acc { border-color: var(--tool-accent); color: var(--tool-accent); }
+  .badge2.warn { border-color: var(--tool-warning); color: var(--tool-warning); }
+  .strip { display: flex; height: 14px; border-radius: 3px; overflow: hidden; width: 64px; border: 1px solid rgba(255,255,255,0.18); }
+  .strip span { flex: 1; }
+  .foot { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-top: 1px solid var(--tool-outline); }
+</style>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="scrim"><div class="dialog">
+    <div class="title">Save layout</div>
+    <div class="field focus"><span>Live set</span><span style="width:1px;height:14px;background:var(--tool-text)"></span></div>
+    <div class="muted" style="font-size:11px">Saved to Layouts · Reference FX. 1 – 64 characters.</div>
+    <div class="actions"><span class="btn raised">Cancel</span><span class="btn primary">Save</span></div>
+  </div></div>
+</div>
+<script>window.mgReady = function () { MG.stage({}); document.getElementById("mb").outerHTML = MG.menuButton({ state: "" }); };</script>
+</body>
+</html>

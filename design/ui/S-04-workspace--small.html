@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="400x300">
+<title>S-04 Design-mode workspace — small window</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:400px;height:300px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="ftb" style="left:8px;top:6px;height:32px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon" data-icon="plus" title="Add element"></span><span class="btn icon" data-icon="alignL" title="Arrange"></span><span class="btn icon on" data-icon="grid"></span><span class="btn raised" data-icon="pages">Live</span><span class="btn icon" data-icon="eye"></span><span class="btn icon" data-icon="palette"></span><span class="btn icon" data-icon="folder"></span><span class="btn primary icon" data-icon="check"></span>
+  </div>
+  <div class="tp sheet" style="height:146px">
+    <div class="grab"></div>
+    <div class="sec" style="padding-top:2px">
+      <div class="row"><span data-icon="macro" data-size="16"></span><span class="title">Macro · Character</span><span class="sp"></span><span class="btn icon dim" data-icon="plus" data-size="14" title="Add target"></span><span class="btn icon dim" data-icon="dock" data-size="14" title="Collapse"></span></div>
+      <div class="li"><span data-icon="link" data-size="13" style="color:var(--tool-accent)"></span>Cutoff<span class="sp"></span><span class="mono muted">0.20–0.60</span></div>
+      <div class="li hover"><span data-icon="link" data-size="13" style="color:var(--tool-accent)"></span>Resonance<span class="sp"></span><span class="mono muted">↺ 0–1</span></div>
+      <div class="li"><span data-icon="link" data-size="13" style="color:var(--tool-accent)"></span>Drive<span class="sp"></span><span class="mono muted">0.10–0.80</span></div>
+    </div>
+  </div>
+</div>
+<script>
+  window.mgReady = function () { MG.stage({ layout: MG.SMALL, design: true, grid: true, selected: ["m"] }); };
+</script>
+</body>
+</html>

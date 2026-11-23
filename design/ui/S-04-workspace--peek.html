@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-04 Design-mode workspace — tools hidden while H is held</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="pill" style="position:absolute;left:340px;top:12px"><span data-icon="eyeOff" data-size="13"></span>Tools hidden · release H</div>
+  <div id="mb"></div>
+</div>
+<script>
+  window.mgReady = function () {
+    MG.stage({ design: true, grid: true, selected: ["cutoff"], states: { envamt: { state: "unbound", missing: "env_amount" } } });
+    document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" });
+  };
+</script>
+</body>
+</html>

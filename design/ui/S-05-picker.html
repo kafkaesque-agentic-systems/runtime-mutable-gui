@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-05 Parameter picker</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="reserved" style="right:0;bottom:0"></div><div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon dim" data-icon="group"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised " data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn " data-icon="warn" style="color:var(--tool-warning)">2</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon " data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="tp float pop" style="left:150px;top:96px;width:330px">
+    <div class="sec" style="padding:8px">
+      <div class="field focus"><span data-icon="search" data-size="14" class="muted"></span><span>cut</span><span style="width:1px;height:14px;background:var(--tool-text)"></span><span style="flex:1"></span><span class="muted" style="font-size:11px">4 of 1,987</span></div>
+    </div>
+    <div class="list" style="padding:4px">
+      <div class="grp" style="padding:4px 8px 2px;font-size:11px;color:var(--tool-text-muted)">Filter</div>
+      <div class="li sel"><span data-icon="check" data-size="14"></span><span><mark>Cut</mark>off</span><span class="sp"></span><span class="mono">cutoff</span><span class="pill" style="height:18px;font-size:10px">float</span></div>
+      <div class="li"><span style="width:14px"></span><span><mark>Cut</mark>off Key Track</span><span class="sp"></span><span class="mono muted">cutoff_kt</span><span class="pill" style="height:18px;font-size:10px">float</span></div>
+      <div class="grp" style="padding:6px 8px 2px;font-size:11px;color:var(--tool-text-muted)">Modulation › LFO 1</div>
+      <div class="li hover"><span style="width:14px"></span><span>LFO <mark>Cut</mark> Depth</span><span class="sp"></span><span class="mono muted">lfo1_cut_depth</span><span class="pill" style="height:18px;font-size:10px">float</span></div>
+      <div class="grp" style="padding:6px 8px 2px;font-size:11px;color:var(--tool-text-muted)">Dynamics › Sidechain</div>
+      <div class="li"><span style="width:14px"></span><span>SC Low <mark>Cut</mark></span><span class="sp"></span><span class="mono muted">sc_lowcut</span><span class="pill" style="height:18px;font-size:10px">enum</span></div>
+    </div>
+    <div class="sec row" style="padding:6px 10px;border-top:1px solid var(--tool-outline)"><span class="kbd">↑↓ · ↩ bind · esc</span><span class="sp"></span><span class="muted" style="font-size:11px">Knob: any parameter</span></div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ design: true, grid: true, selected: ["cutoff"], states: { envamt: { state: "unbound", missing: "env_amount" } } }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" }); };</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-03 Control menu</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="menu pop" style="left:96px;top:150px;width:216px">
+    <div class="row" style="padding:3px 8px 5px"><span class="title">Cutoff</span><span class="sp"></span><span class="mono muted">1.24 kHz</span></div>
+    <div class="li hover"><span data-icon="reset"></span>Reset<span class="sp"></span><span class="sub">1.00 kHz</span></div>
+    <div class="li"><span data-icon="keyboard"></span>Type value…<span class="sp"></span><span class="kbd">↩</span></div>
+    <div class="li"><span class="swatch" style="width:14px;height:14px;border-radius:3px;background:transparent;border:1.5px solid var(--tool-text-muted)"></span>Fine adjust<span class="sp"></span><span class="kbd">⇧ drag</span></div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ states: { cutoff: { state: "hover" } } }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "faint" }); };</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="1080x2780">
+<title>S-12 Element gallery — Studio Light</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+<style>
+  .sheet2 { padding: 20px 24px; background: var(--role-background); color: var(--role-text); min-height: 2780px; }
+  .sheet2 h1 { margin: 0 0 4px; font: 600 15px var(--tool-font); color: var(--role-text); }
+  .sheet2 p { margin: 0 0 14px; font: 12px var(--tool-font); color: var(--role-text-muted); }
+  table { border-collapse: collapse; }
+  th { font: 600 11px var(--tool-font); color: var(--role-text-muted); text-transform: uppercase; letter-spacing: .06em; text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--role-border); }
+  td { padding: 8px; vertical-align: middle; border-bottom: 1px solid var(--role-border); height: 104px; }
+  td.k { font: 500 12px var(--tool-font); color: var(--role-text); width: 128px; }
+  td.k span { display: block; font: 11px var(--tool-font-mono); color: var(--role-text-muted); margin-top: 2px; }
+  td.na { color: var(--role-text-muted); font: 12px var(--tool-font); text-align: center; width: 150px; }
+  .cell { position: relative; width: 150px; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<div class="sheet2 theme-studio-light"><h1>Studio Light</h1><p>Every element kind in each state, drawn only from the theme's roles and shape tokens. Hover lightens the track or outline; dragging shows the value bubble; focus draws the focus role; unbound draws the disabled role with a dashed outline and the missing id. “Disabled” has no separate look in version 1: the only inert state is unbound. — marks a state the kind does not have. Custom kinds draw themselves; the row shows the reference plugin’s Transfer curve. An unknown element is always drawn by the library.</p>
+<table id="t"><tr><th>Kind</th><th>Normal</th><th>Hover</th><th>Dragging</th><th>Focused</th><th>Unbound</th></tr></table></div>
+<script>
+window.mgReady = function () {
+  const C = ["normal", "hover", "dragging", "focused", "unbound"];
+  const ROWS = [
+    ["Knob", "knob · arc", { kind: "knob", w: 72, h: 100, label: "Cutoff", value: 0.62, text: "1.24 kHz", mod: 0.74 }, C],
+    ["Knob", "knob · pointer", { kind: "knob", style: "pointer", w: 72, h: 100, label: "Attack", value: 0.3, text: "8 ms", accent: "accent-4" }, C],
+    ["Knob", "knob · filled", { kind: "knob", style: "filled", w: 72, h: 100, label: "Mix", value: 0.7, text: "70 %" }, C],
+    ["Fader", "fader · vertical", { kind: "fader", w: 56, h: 100, label: "Level", value: 0.7, text: "−1.5 dB", mod: 0.8 }, C],
+    ["Fader", "fader · horizontal", { kind: "fader", orientation: "horizontal", w: 136, h: 60, label: "Pan", value: 0.5, text: "C" }, C],
+    ["Switch", "switch", { kind: "switch", w: 140, h: 28, label: "Key track", on: true }, ["normal", "hover", null, "focused", "unbound"]],
+    ["XY pad", "xy_pad", { kind: "xy_pad", w: 110, h: 96, x: 0.62, y: 0.4, xLabel: "Cutoff", yLabel: "Drive", text: "1.2k · 8.8 dB" }, C],
+    ["Macro", "macro", { kind: "macro", w: 80, h: 106, label: "Character", value: 0.57, text: "57 %", targets: 3 }, C],
+    ["Selector", "selector · segments", { kind: "selector", w: 140, h: 28, options: ["LP", "BP", "HP", "Notch"], selected: 0 }, ["normal", "hover", null, "focused", "unbound"]],
+    ["Selector", "selector · dropdown", { kind: "selector", presentation: "dropdown", w: 130, h: 28, options: ["Sine", "Saw"], selected: 1 }, ["normal", "hover", null, "focused", "unbound"]],
+    ["Menu element", "menu", { kind: "menu", w: 130, h: 28, label: "Presets" }, ["normal", "hover", null, "focused", null]],
+    ["Page tabs", "page_tabs", { kind: "page_tabs", w: 140, h: 30, pages: ["Main", "FX", "Mod"] }, ["normal", "hover", null, "focused", null]],
+    ["Oscilloscope", "oscilloscope", { kind: "oscilloscope", w: 140, h: 86, label: "out" }, ["normal", null, null, null, "unbound"]],
+    ["Spectrum", "spectrum", { kind: "spectrum", w: 140, h: 86 }, ["normal", null, null, null, "unbound"]],
+    ["Level meter", "level_meter", { kind: "level_meter", w: 30, h: 96, l: 0.93, pl: 0.97 }, ["normal", null, null, null, "unbound"]],
+    ["GR meter", "gr_meter", { kind: "gr_meter", w: 30, h: 96, value: 0.35, text: "8.4" }, ["normal", null, null, null, "unbound"]],
+    ["Label", "label", { kind: "label", w: 140, h: 28, text: "FILTER", typeface: "heading", size: 13, tracking: 1.5 }, ["normal", null, null, null, null]],
+    ["Panel", "panel", { kind: "panel", w: 140, h: 80, title: "Output" }, ["normal", null, null, null, null]],
+    ["Image", "image", { kind: "image", w: 140, h: 80, file: "brushed.png" }, ["normal", null, null, null, null]],
+    ["Custom kind (example)", "org.…reference.transfer", { kind: "custom_transfer", w: 140, h: 96, value: 0.44 }, ["normal", "hover", null, "focused", "unbound"]],
+    ["Unknown element", "not registered here", { kind: "unknown", w: 140, h: 80 }, ["normal", null, null, null, null]],
+  ];
+  const t = document.getElementById("t");
+  for (const [name, id, e, states] of ROWS) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = '<td class="k">' + name + '<span>' + id + '</span></td>' + states.map((s) => {
+      if (!s) return '<td class="na">—</td>';
+      const el = Object.assign({ x: 0, y: 0, missing: "env_amount", tap: "pre" }, e, { state: s });
+      if (s === "dragging" && el.kind === "knob") el.value = Math.min(1, el.value + 0.1);
+      return '<td><div class="cell" style="height:' + (e.h + 22) + 'px"><div style="position:relative;width:' + e.w + 'px;height:' + e.h + 'px;margin-top:18px">' + MG.svgFor(el) + '</div></div></td>';
+    }).join("");
+    t.appendChild(tr);
+  }
+};
+</script>
+</body>
+</html>

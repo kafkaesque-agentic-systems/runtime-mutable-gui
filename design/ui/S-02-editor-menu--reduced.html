@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-02 Editor menu — design mode switched off by the developer</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="menu pop" style="right:8px;bottom:40px;width:236px">
+    <div class="row" style="padding:4px 8px 6px"><span class="title">Reference FX</span></div>
+    <div class="grp">Pages</div>
+    <div class="li"><span data-icon="check" style="color:var(--tool-accent)"></span>Main</div>
+    <div class="li"><span style="width:16px"></span>Filter</div>
+    <div class="li"><span style="width:16px"></span>Dynamics</div>
+    <div class="li"><span style="width:16px"></span>Mod</div>
+    <div class="sep"></div>
+    <div class="li hover"><span data-icon="palette"></span>Theme<span class="sp"></span><span class="sub">Studio Dark</span><span data-icon="chevronR" data-size="12"></span></div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="reset"></span>Reset to developer default</div>
+  </div>
+  <div class="menu pop" style="right:250px;bottom:72px;width:228px">
+    <div class="grp">Built in</div>
+    <div class="li sel"><span data-icon="check"></span>Studio Dark</div>
+    <div class="li"><span style="width:16px"></span>Studio Light</div>
+    <div class="li"><span style="width:16px"></span>High Contrast</div>
+    <div class="grp">Your themes</div>
+    <div class="li"><span style="width:16px"></span>Night Ink</div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="upload"></span>Import theme…</div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({}); document.getElementById("mb").outerHTML = MG.menuButton({ state: "" }); };</script>
+</body>
+</html>

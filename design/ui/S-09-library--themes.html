@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-09 Library — themes shared by every plugin</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+<style>
+  .lib { position: absolute; left: 110px; top: 50px; width: 620px; height: 420px; display: grid; grid-template-rows: auto auto 1fr auto; }
+  .tabs2 { display: flex; gap: 2px; padding: 6px 10px; border-bottom: 1px solid var(--tool-outline); }
+  .tabs2 span { height: 26px; padding: 0 10px; border-radius: 5px; display: inline-flex; align-items: center; gap: 6px; color: var(--tool-text-muted); }
+  .tabs2 span.on { background: var(--tool-bg-raised); color: var(--tool-text); }
+  .body2 { display: grid; grid-template-columns: 1fr 236px; min-height: 0; }
+  .body2 .list { padding: 6px; border-right: 1px solid var(--tool-outline); overflow: hidden; }
+  .detail { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .thumb { height: 112px; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid var(--tool-outline); background: var(--role-background); }
+  .badge2 { height: 18px; padding: 0 7px; border-radius: 9px; font-size: 10.5px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--tool-outline); color: var(--tool-text-muted); }
+  .badge2.acc { border-color: var(--tool-accent); color: var(--tool-accent); }
+  .badge2.warn { border-color: var(--tool-warning); color: var(--tool-warning); }
+  .strip { display: flex; height: 14px; border-radius: 3px; overflow: hidden; width: 64px; border: 1px solid rgba(255,255,255,0.18); }
+  .strip span { flex: 1; }
+  .foot { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-top: 1px solid var(--tool-outline); }
+</style>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div style="position:absolute;inset:0;background:var(--tool-scrim)"></div>
+  <div id="mb"></div>
+  <div class="tp float lib">
+    <div class="row" style="padding:10px 12px 6px"><span data-icon="folder" data-size="16"></span><span class="title">Library</span><span class="sp"></span><span class="btn icon dim" data-icon="close" data-size="14"></span></div>
+    <div class="tabs2"><span>Layouts · Reference FX</span><span class="on">Themes · all plugins</span></div>
+    <div class="body2">
+      <div class="list">
+        <div class="li sel"><span class="strip "><span style="background:var(--role-background)"></span><span style="background:var(--role-surface)"></span><span style="background:var(--role-text)"></span><span style="background:var(--role-accent-1)"></span><span style="background:var(--role-accent-2)"></span><span style="background:var(--role-accent-3)"></span><span style="background:var(--role-accent-4)"></span></span>Studio Dark<span class="sp"></span><span class="badge2" style="border-color:var(--tool-on-accent);color:var(--tool-on-accent)">★ all plugins</span></div>
+        <div class="li"><span class="strip theme-studio-light"><span style="background:var(--role-background)"></span><span style="background:var(--role-surface)"></span><span style="background:var(--role-text)"></span><span style="background:var(--role-accent-1)"></span><span style="background:var(--role-accent-2)"></span><span style="background:var(--role-accent-3)"></span><span style="background:var(--role-accent-4)"></span></span>Studio Light<span class="sp"></span><span class="badge2">built in</span></div>
+        <div class="li"><span class="strip theme-high-contrast"><span style="background:var(--role-background)"></span><span style="background:var(--role-surface)"></span><span style="background:var(--role-text)"></span><span style="background:var(--role-accent-1)"></span><span style="background:var(--role-accent-2)"></span><span style="background:var(--role-accent-3)"></span><span style="background:var(--role-accent-4)"></span></span>High Contrast<span class="sp"></span><span class="badge2">built in</span></div>
+        <div class="li hover"><span class="strip" style="background:linear-gradient(90deg,#0E1320 0 14%,#151C2E 14% 28%,#E8ECF6 28% 43%,#FF8A5C 43% 57%,#8AB4FF 57% 71%,#FF6B9A 71% 86%,#5EE0B0 86%)"></span>Night Ink<span class="sp"></span><span class="sub">21 Nov</span></div>
+        <div class="li"><span class="strip" style="background:linear-gradient(90deg,#17120C 0 14%,#231A10 14% 28%,#F6EBDD 28% 43%,#FFB347 43% 57%,#FF7A45 57% 71%,#E0C080 71% 86%,#9AD17C 86%)"></span>Stage Amber<span class="sp"></span><span class="sub">9 Nov</span></div>
+      </div>
+      <div class="detail">
+        <div class="row"><span class="title">Studio Dark</span><span class="sp"></span><span class="badge2">built in</span></div>
+        <div class="muted" style="font-size:11px">Used by every new instance of every mutable-gui plugin that has no default of its own.</div>
+        <div class="row" style="flex-wrap:wrap;gap:6px"><span class="btn primary">Apply</span><span class="btn raised" data-icon="download">Export…</span></div>
+        <div class="btn raised" style="justify-content:flex-start"><span data-icon="close" data-size="13"></span>Stop using for all plugins</div>
+        <div class="muted" style="font-size:11px">Built-in themes cannot be changed or deleted. Edit one and save it under a new name.</div>
+      </div>
+    </div>
+    <div class="foot"><span class="btn raised" data-icon="upload">Import package…</span><span class="btn raised" data-icon="download">Save current theme…</span><span class="sp"></span><span class="mono muted" style="font-size:10.5px">…/mutable-gui/themes/</span></div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({}); document.getElementById("mb").outerHTML = MG.menuButton({ state: "" }); window.thumbs && window.thumbs(); };</script>
+</body>
+</html>

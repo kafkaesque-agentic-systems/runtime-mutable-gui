@@ -391,3 +391,128 @@ with Shift) or one step; Tab follows reading order; the design-mode shortcut is 
 generated pages hold 48 controls on 8 columns; switches take two-state parameters and
 selectors 2–32 steps; macros have 1–16 targets.
 Consequences: The interface design stage may refine these through a superseding decision.
+
+## D-35 — Design tools float over the canvas
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner chose direction B of S-04)
+Context: Design mode needs a palette, toolbar and inspector in plugin windows as small as
+400 × 300. Directions shown: A, grow the window and dock panels around the canvas; B, keep
+the window and float the tools over the canvas; C, keep the window and put every tool in a
+bottom drawer above which the canvas shrinks.
+Decision: B. A floating toolbar at the top, a floating palette at the left, an inspector card
+beside the selection (a bottom sheet in small windows); holding H hides every tool to see what
+they cover.
+Consequences: Tools cover part of the layout while editing; the window size never changes, so
+no host resize negotiation is needed.
+
+## D-36 — The library's tools have one fixed style and size
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner)
+Context: The tools could follow the user's theme, scale with the canvas, or be restyled by
+the developer. Scenario: a theme with grey text on grey makes its own editor unreadable.
+Decision: Menu button, menus, design panels, dialogs and notices use one fixed dark style
+(`--tool-*` in `design/ui/tokens.css`) with every text pair at least 7:1, at one physical size
+(12 px text, 24 px hit targets) whatever the canvas scale; neither themes nor developers
+restyle them. Disabled tool items are drawn at half opacity and are exempt from the 7:1 rule.
+Consequences: The tools look the same in every plugin that uses the library.
+
+## D-37 — The menu button's corner is the developer's choice
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner)
+Context: D-27 left the menu button's look and position to the interface design stage.
+Decision: A 24 px round button 8 px from two window edges, drawn faint until the pointer is
+near; the developer picks the corner, bottom-right by default. In design mode its corner
+area is hatched so users do not place controls under it; it carries a dot while notices exist.
+Consequences: R-149; the adapter builder gains a corner option.
+
+## D-38 — The developer default is always one step away
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner: "there should always be a way to get back to the version that the
+developer ships with")
+Context: Reset to developer default existed only in design mode.
+Decision: The editor menu offers "Reset to developer default" in every state, and the
+library lists a read-only "Developer default" entry first.
+Consequences: R-150 and R-151.
+
+## D-39 — Only actions that cannot be undone ask first
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner)
+Context: Which mistakes need a confirmation.
+Decision: Undoable actions (deleting elements or pages, reset, replacing imports) happen at
+once, with Undo and Redo always in the design toolbar; overwriting or deleting a library file
+and discarding a kept unreadable layout ask first.
+Consequences: Three confirmation dialogs in total (S-10).
+
+## D-40 — Material Symbols icons through egui_material_icons
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner)
+Context: egui-phosphor 0.14.0 requires egui 0.36 and cannot be used with egui 0.37;
+egui_material_icons 0.9.0 supports egui 0.37 (crate MIT, font Material Symbols Rounded,
+Apache-2.0), about 1.3 MB compressed added to every plugin.
+Decision: egui_material_icons 0.9.0 for every tool icon and the built-in palette icons.
+Consequences: Larger plugin binaries; custom kinds may use the same icons in the palette.
+
+## D-41 — Inter is bundled
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner)
+Context: egui 0.37 bundles only Ubuntu Light, Hack and emoji fonts; Ubuntu Light is thin at
+11–12 px on dark backgrounds.
+Decision: Inter 4.1 (SIL OFL 1.1) Regular and Medium are bundled for the tools; themes may
+choose the built-in fonts Inter, Inter Medium, Hack and Ubuntu Light, or font assets.
+Consequences: Two font files and the OFL text ship in every plugin.
+
+## D-42 — Developers register custom element kinds in Rust
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner: "a developer may have their own ideas about the look of the interface
+for a plugin they are creating and we must be able to accommodate that. that is the point.")
+Context: The built-in kinds are a default set; developers need their own elements and look.
+Options were custom kinds in Rust, redrawing built-in kinds, image (filmstrip) skins and hiding
+built-ins; the owner chose custom kinds. Supersedes the specification's former out-of-scope
+line "third-party element types supplied by plugins or users".
+Decision: A developer registers custom element kinds with the library: id (frozen at release),
+integer version with migrations, palette name, icon, category and declared typed properties,
+from which the library builds the inspector, validation, saving and undo. Only developers add
+kinds; packages never carry code (D-21 stands). Custom elements draw anything with egui's
+painter and receive the active theme; their code runs only on the editor thread through a
+narrow `KindContext` and changes parameters only through the library's gestures. Unregistered
+or newer kinds are kept as unknown elements, never deleted.
+Consequences: R-152–R-168, I-18–I-20. P1, I-04 and P2 hold whatever a custom element does,
+except a panic or hang in its own code, which the library does not contain.
+
+## D-43 — Generated selectors are dropdowns; "disabled" looks like unbound
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner ratified, 2026-11-22: "Ratify all")
+Context: In the 80-unit cells of a generated layout, segmented selectors overflow (S-13).
+nice-plug parameters have no read-only or disabled flag, so no control can be disabled other
+than by being unbound.
+Decision: Generated selectors use the dropdown presentation. Element states are normal, hover,
+dragging, focused and unbound; the "disabled" colour role draws unbound elements.
+Consequences: The element gallery (S-12) has five state columns.
+
+## D-44 — Narrow meters show "No signal" vertically
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner ratified, 2026-11-22: "Ratify all")
+Context: R-052's "No signal: <name>" does not fit across a 30-unit level or gain-reduction
+meter.
+Decision: A display narrower than 80 canvas units draws a dashed outline and the text rotated
+to read upward.
+Consequences: None beyond the meter drawing code.
+
+## D-45 — The reference plugin's custom kind is a transfer curve
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner ratified, 2026-11-22: "Ratify all")
+Context: R-168 needs a custom kind that proves the API end to end without new DSP.
+Decision: "Transfer curve", a display drawing the drive stage's input-to-output curve from the
+parameter bound to its binding slot, with a colour-role property and a grid toggle.
+Consequences: The reference plugin's palette has a "Reference FX" section.

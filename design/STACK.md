@@ -37,6 +37,8 @@ committed.
 | criterion | 0.8.2 | Benchmarks of the performance requirements | crates.io API |
 | egui_kittest | 0.37.0 | Headless editor harness and rendering snapshots; feature `snapshot` | crates.io API |
 | nice-assert-no-alloc | 1.0.0 | Allocation tests of tap pushes and the reference plugin's process call | crates.io API |
+| egui_material_icons | 0.9.0 | Tool and palette icons (Material Symbols Rounded, D-40) | crates.io API; requires `egui ^0.37.0` |
+| Inter | 4.1 | Bundled font, Regular and Medium, for the tools and as a built-in theme font (D-41) | GitHub release `rsms/inter` v4.1, 2024-11-16; SIL OFL 1.1 |
 | tempfile | 3.27.0 | Temporary library folders in tests | crates.io API |
 | clap-validator | 0.4.1 | CLAP conformance and state tests of the reference plugin | `clap-validator --version` on this Mac |
 | Bitwig Studio | 5.3.13 | Manual host gate (owner) | `CFBundleShortVersionString` of `/Applications/Bitwig Studio.app` |
@@ -55,3 +57,4 @@ committed.
 - The `image` crate: `png` covers the one image format accepted (R-123).
 - Scripting engines (Lua, Rhai, JavaScript): packages hold no code (D-21).
 - AccessKit wiring: screen readers are out of version 1 (D-15).
+- egui-phosphor: version 0.14.0 requires egui 0.36 (D-40).

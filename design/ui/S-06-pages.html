@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-06 Pages and canvas</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="reserved" style="right:0;bottom:0"></div><div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon dim" data-icon="group"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised on" data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn " data-icon="warn" style="color:var(--tool-warning)">2</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon " data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="tp float pop" style="left:448px;top:50px;width:264px">
+    <div class="sec">
+      <div class="h">Pages<span class="sp"></span><span class="muted" style="text-transform:none;letter-spacing:0">4 of 64</span></div>
+      <div class="list">
+        <div class="li sel"><span data-icon="grip" data-size="14"></span>Main<span class="sp"></span><span class="sub">13 elements</span></div>
+        <div class="li"><span data-icon="grip" data-size="14" class="muted"></span><div class="field focus" style="flex:1;height:22px">Filter Deep<span style="width:1px;height:13px;background:var(--tool-text)"></span></div></div>
+        <div class="li hover"><span data-icon="grip" data-size="14" class="muted"></span>Dynamics<span class="sp"></span><span class="btn icon dim" data-icon="edit" data-size="13"></span><span class="btn icon dim" data-icon="trash" data-size="13"></span></div>
+        <div class="li"><span data-icon="grip" data-size="14" class="muted"></span>Mod<span class="sp"></span><span class="sub">22 elements</span></div>
+      </div>
+      <div class="row" style="margin-top:4px"><span class="btn" data-icon="plus">Add page</span><span class="sp"></span><span class="kbd">drag to reorder</span></div>
+    </div>
+    <div class="sec">
+      <div class="h">Canvas<span class="sp"></span><span class="muted" style="text-transform:none;letter-spacing:0">every page</span></div>
+      <div class="grid2"><div class="field"><span class="k">W</span><span class="v">840</span></div><div class="field"><span class="k">H</span><span class="v">520</span></div></div>
+      <div class="muted" style="font-size:11px;margin-top:5px">200 – 4,000 units per side</div>
+    </div>
+    <div class="sec">
+      <div class="h">Grid</div>
+      <div class="row"><span class="muted" style="width:40px">Step</span><div class="field" style="flex:1"><span class="mono" style="font-size:12px">8</span><span style="flex:1"></span><span class="k">2 – 64 units</span></div></div>
+      <div class="row"><span class="muted" style="width:40px">Snap</span><div class="seg" style="flex:1"><span class="on">On</span><span>Off</span></div></div>
+    </div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ design: true, grid: true, selected: [] }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" }); };</script>
+</body>
+</html>

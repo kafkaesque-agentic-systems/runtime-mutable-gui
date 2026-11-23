@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-08 Theme editor — colours and contrast</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+<style>
+  /* "Night Ink": an example user theme (user data, not product tokens), with one pair below 4.5:1 on purpose */
+  .theme-night-ink { --role-background: #0E1320; --role-surface: #151C2E; --role-surface-raised: #222C47; --role-border: #2E3A5C; --role-text: #E8ECF6; --role-text-muted: #8590AC; --role-accent-1: #FF8A5C; --role-accent-2: #8AB4FF; --role-accent-3: #FF6B9A; --role-accent-4: #5EE0B0; --role-accent-5: #C3A6FF; --role-accent-6: #FFD37A; --role-accent-7: #5ED0E8; --role-accent-8: #F7A6C9; --role-modulation: #7DE3F4; --role-focus: #8AB4FF; }
+  .tabs2 { display: flex; gap: 2px; padding: 6px 8px; border-bottom: 1px solid var(--tool-outline); }
+  .tabs2 span { height: 24px; padding: 0 9px; border-radius: 5px; display: inline-flex; align-items: center; color: var(--tool-text-muted); }
+  .tabs2 span.on { background: var(--tool-bg-raised); color: var(--tool-text); }
+  .role { display: grid; grid-template-columns: 16px 1fr 74px; gap: 8px; align-items: center; min-height: 24px; }
+  .role .mono { text-align: right; }
+  .acc8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .acc8 span { height: 22px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.18); }
+  .ct { display: grid; grid-template-columns: 1fr 52px 18px; gap: 4px 8px; align-items: center; font-size: 11.5px; }
+  .ct .mono { text-align: right; }
+</style>
+</head>
+<body>
+<div class="host theme-night-ink" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon dim" data-icon="group"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised " data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn " data-icon="warn" style="color:var(--tool-warning)">2</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon on" data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="tp float pop" style="right:8px;top:52px;width:300px;bottom:40px;overflow:hidden">
+    <div class="sec" style="padding:8px 10px"><div class="row"><span data-icon="palette" data-size="16"></span><div class="field" style="flex:1;height:24px">Night Ink</div><span class="btn primary" style="height:24px">Save theme</span><span class="btn icon dim" data-icon="close" data-size="14"></span></div></div>
+    <div class="tabs2"><span class="on">Colours</span><span>Type</span><span>Surfaces</span><span>Shape</span></div>
+    <div class="sec" style="background:var(--tool-bg-raised)">
+      <div class="h">Contrast<span class="sp"></span><span class="muted" style="text-transform:none;letter-spacing:0">5 of 6 pairs ≥ 4.5 : 1</span></div>
+      <div class="ct"><span style="color:var(--tool-warning)">text-muted on surface-raised</span><span class="mono" style="color:var(--tool-warning)">4.33</span><span data-icon="warn" data-size="13" style="color:var(--tool-warning)"></span>
+        <span class="muted">text-muted on surface</span><span class="mono muted">5.32</span><span data-icon="check" data-size="13" style="color:var(--tool-accent)"></span></div>
+    </div>
+    <div class="sec">
+      <div class="h">Base</div>
+      <div class="role"><span class="swatch" style="background:var(--role-background)"></span>background<span class="mono">#0E1320</span></div>
+      <div class="role"><span class="swatch" style="background:var(--role-surface)"></span>surface<span class="mono">#151C2E</span></div>
+      <div class="role" style="background:var(--tool-bg-hover);border-radius:4px;margin:0 -4px;padding:0 4px"><span class="swatch" style="background:var(--role-surface-raised)"></span>surface-raised<span class="mono">#222C47</span></div>
+      <div class="role"><span class="swatch" style="background:var(--role-text)"></span>text<span class="mono">#E8ECF6</span></div>
+      <div class="role"><span class="swatch" style="background:var(--role-text-muted)"></span>text-muted<span class="mono">#8590AC</span></div>
+    </div>
+    <div class="sec"><div class="h">Accents 1–8</div><div class="acc8"><span style="background:var(--role-accent-1)"></span><span style="background:var(--role-accent-2)"></span><span style="background:var(--role-accent-3)"></span><span style="background:var(--role-accent-4)"></span><span style="background:var(--role-accent-5)"></span><span style="background:var(--role-accent-6)"></span><span style="background:var(--role-accent-7)"></span><span style="background:var(--role-accent-8)"></span></div></div>
+    <div class="sec" style="padding-top:4px;padding-bottom:4px"><div class="acc"><span data-icon="chevronR" data-size="12"></span>State roles<span class="sp"></span><span style="text-transform:none;letter-spacing:0">positive … disabled</span></div></div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ hide: ["macro", "p-out", "outfader", "outmeter", "mix"] }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" }); };</script>
+</body>
+</html>

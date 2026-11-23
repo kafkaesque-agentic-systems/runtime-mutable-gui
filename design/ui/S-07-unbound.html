@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-07 Unbound list</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="reserved" style="right:0;bottom:0"></div><div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon dim" data-icon="group"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised " data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn on" data-icon="warn" style="color:var(--tool-warning)">3</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon " data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="tp float pop" style="left:520px;top:50px;width:300px">
+    <div class="sec"><div class="row"><span data-icon="warn" style="color:var(--tool-warning)"></span><span class="title">3 unbound</span><span class="sp"></span><span class="muted" style="font-size:11px">all pages</span></div>
+      <div class="muted" style="font-size:11px;margin-top:4px">These elements name a parameter, signal or element kind this plugin does not have. They stay as they are until you rebind or delete them.</div></div>
+    <div class="list" style="padding:4px">
+      <div class="grp" style="padding:4px 8px 2px;font-size:11px;color:var(--tool-text-muted)">Main</div>
+      <div class="li hover"><span data-icon="knob" data-size="15"></span><span>Env Amt</span><span class="sp"></span><span class="mono muted">env_amount</span><span class="btn raised" style="height:22px">Rebind…</span></div>
+      <div class="li"><span data-icon="puzzle" data-size="15"></span><span>Unknown</span><span class="sp"></span><span class="mono muted">org.vendor.wavetable</span><span class="btn raised" style="height:22px">Show</span></div>
+      <div class="grp" style="padding:6px 8px 2px;font-size:11px;color:var(--tool-text-muted)">Dynamics</div>
+      <div class="li"><span data-icon="scope" data-size="15"></span><span>Scope</span><span class="sp"></span><span class="mono muted">tap “sidechain”</span><span class="btn raised" style="height:22px">Rebind…</span></div>
+    </div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ design: true, grid: true, selected: ["envamt"], states: { envamt: { state: "unbound", missing: "env_amount" } } }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" }); };</script>
+</body>
+</html>

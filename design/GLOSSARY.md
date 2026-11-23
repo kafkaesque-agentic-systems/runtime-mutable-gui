@@ -18,26 +18,32 @@ use these words.
 - **Colour role**: a named colour in a theme, such as "background", "text" or "accent 3".
   Elements name colour roles, never colours, so that changing the theme recolours them.
 - **Control**: an element the user operates in perform mode: knob, fader, switch, XY pad,
-  macro, selector, menu element, page tabs. Most controls are bound to parameters; page tabs
-  and some menu items open pages instead. Not to be confused with a display, which only shows
-  data.
+  macro, selector, menu element, page tabs, or a custom element kind of the control category.
+  Most controls are bound to parameters; page tabs and some menu items open pages instead. Not
+  to be confused with a display, which only shows data.
 - **Control menu**: the built-in menu that opens on a control in perform mode (right-click or
   long press) to reset it, type a value or lock fine adjustment. Not to be confused with the
   menu element and the editor menu.
-- **Decoration**: an element bound to nothing: label, panel, image.
+- **Custom element kind**: an element kind a plugin developer writes in Rust and registers with
+  the library, with its own look, its declared properties and a category (control, display or
+  decoration). It appears in the design palette beside the built-in kinds and is edited, saved
+  and themed like them. Only developers add kinds; packages never carry code.
+- **Decoration**: an element bound to nothing: label, panel, image, or a custom element kind
+  of the decoration category.
 - **Design mode**: the state of the editor in which the user adds, moves, resizes, groups,
   binds and removes elements, manages pages and edits the theme. Operating a control in
   design mode selects it; it never changes a parameter.
 - **Developer default**: the layout and theme the plugin developer ships inside the plugin,
   or, when the developer ships none, the layout the library generates from the plugin's
   parameters.
-- **Display**: an element that draws data from a signal tap: oscilloscope, spectrum,
-  level meter, gain-reduction meter.
+- **Display**: an element that draws data without being operated: oscilloscope, spectrum,
+  level meter, gain-reduction meter, or a custom element kind of the display category.
 - **Editor**: the plugin's window as a whole: the current page of the layout plus the editor
   menu and the notices.
 - **Editor menu**: the menu, always reachable from a button no layout can remove or cover,
   that switches modes, lists pages, chooses themes and opens the library actions.
-- **Element**: one item placed on a page: a control, a display or a decoration.
+- **Element**: one item placed on a page: a control, a display or a decoration, of a built-in
+  kind or a custom element kind.
 - **Gesture**: one continuous change of a parameter by the user, from press to release,
   reported to the host as a single edit so that automation recording and host undo treat it
   as one action.
@@ -82,5 +88,8 @@ use these words.
 - **Unbound**: the state of a control whose parameter, or a display whose signal tap, the
   plugin does not have. It stays in the layout, drawn as unbound, until the user rebinds or
   removes it.
+- **Unknown element**: an element whose custom kind is not registered in this plugin, or was
+  saved by a newer version of its kind. It is kept exactly as saved, drawn as a placeholder and
+  can be moved or deleted, but not edited.
 - **User default**: the layout and theme the user has chosen, in the library, to show in every
   new instance of one plugin in place of the developer default.

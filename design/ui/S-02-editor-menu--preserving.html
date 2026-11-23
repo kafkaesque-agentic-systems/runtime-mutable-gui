@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-02 Editor menu — while an unreadable saved layout is kept</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="menu pop" style="right:8px;bottom:40px;width:268px">
+    <div class="row" style="padding:4px 8px 6px"><span class="title">Reference FX</span></div>
+    <div class="li" style="align-items:flex-start;color:var(--tool-warning)"><span data-icon="lock" style="margin-top:2px"></span><span>Editing is locked while the saved layout that could not be read is kept.</span></div>
+    <div class="li"><span style="width:16px"></span><span class="btn raised" style="height:22px">Discard saved layout…</span></div>
+    <div class="sep"></div>
+    <div class="li dis"><span data-icon="edit"></span>Design mode<span class="sp"></span><span class="kbd">⌘E</span></div>
+    <div class="grp">Pages</div>
+    <div class="li"><span data-icon="check" style="color:var(--tool-accent)"></span>Main</div>
+    <div class="li"><span style="width:16px"></span>Filter</div>
+    <div class="sep"></div>
+    <div class="li dis"><span data-icon="palette"></span>Theme<span class="sp"></span><span data-icon="chevronR" data-size="12"></span></div>
+    <div class="li dis"><span data-icon="folder"></span>Library<span class="sp"></span><span data-icon="chevronR" data-size="12"></span></div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="reset"></span>Reset to developer default…</div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({}); document.getElementById("mb").outerHTML = MG.menuButton({ state: "", badge: true }); };</script>
+</body>
+</html>

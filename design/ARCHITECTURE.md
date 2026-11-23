@@ -25,11 +25,13 @@ it.
 | Core: design | `crates/mutable-gui/src/design/` | Design-mode input and panels: palette, selection and marquee, handles, snapping, align and distribute, groups, clipboard, inspector, parameter picker, tap picker, unbound list, theme editor, page management. Produces commands; never mutates the document directly. |
 | Core: edit | `crates/mutable-gui/src/edit/` | `Command` values that change the instance state, applied by one function, and the undo stack with structural sharing of unchanged pages and assets. |
 | Core: library | `crates/mutable-gui/src/library/` | Library paths per platform, listing, save (temporary file then rename), delete, user defaults and suite default theme, behind a `Storage` trait; the `FileDialog` trait and its rfd implementation. |
+| Core: custom kinds | `crates/mutable-gui/src/custom/` | The `ElementKind` trait a developer implements, the `KindRegistry` (R-152–R-155), declared property types and their validation, `KindContext` (the only thing custom code receives: egui painter and frame, properties, theme, parameter values and formatting, gesture calls on its binding slots, data of its tap slots, repaint requests), the gesture tracker that closes gestures custom code leaves open, and the unknown-element placeholder. |
+| Core: bundled assets | `crates/mutable-gui/assets/` | Inter 4.1 Regular and Medium with their OFL licence text, loaded into egui for the tools and offered as built-in theme fonts. |
 | Core: generator | `crates/mutable-gui/src/generate.rs` | The generated default layout from a parameter list (R-003–R-006). |
 | Core: persistence cell | `crates/mutable-gui/src/persist.rs` | `StateCell`: the lock-free hand-off of the serialized instance state between the editor thread and whichever thread the framework saves and loads on, with a generation counter for loads. |
 | Core: editor | `crates/mutable-gui/src/editor.rs` | `EditorState`, one per plugin instance and living as long as it: the decoded instance state, mode, selection, undo stack, notices, focus; `EditorState::frame(&egui::Context)` is the per-frame entry point. |
-| Adapter | `crates/mutable-gui-nice/` | `MutableGui` builder (embedded package, taps, design-mode switch); `ParamSource` over nice-plug's parameter map and `GuiContext`; the nice-plug `Editor` built with nice-plug-egui that owns the `EditorState` and calls `frame`; `PersistedUi`, the `#[persist = "mutable-gui"]` field type backed by `StateCell`. |
-| Reference plugin | `examples/reference-plugin/` | Crate `mutable-gui-reference`: a nice-plug CLAP effect with about 60 parameters in groups (filter, drive, compressor, modulation, output), taps "out" (audio, 2 channels) and "gr" (scalar), and `assets/default.mgui` embedded as its developer default. |
+| Adapter | `crates/mutable-gui-nice/` | `MutableGui` builder (embedded package, taps, custom kind registration, menu-button corner, design-mode switch); `ParamSource` over nice-plug's parameter map and `GuiContext`; the nice-plug `Editor` built with nice-plug-egui that owns the `EditorState` and calls `frame`; `PersistedUi`, the `#[persist = "mutable-gui"]` field type backed by `StateCell`. |
+| Reference plugin | `examples/reference-plugin/` | Crate `mutable-gui-reference`: a nice-plug CLAP effect with about 60 parameters in groups (filter, drive, compressor, modulation, output), taps "out" (audio, 2 channels) and "gr" (scalar), `assets/default.mgui` embedded as its developer default, and the custom kind "Transfer curve" in `src/transfer_curve.rs` (R-168). |
 | Build helper | `xtask/` | `cargo xtask bundle` through nice-plug-xtask; `cargo xtask schema` writes the JSON Schemas; `cargo xtask fixtures` checks the schema fixtures. |
 | JSON Schemas | `schema/` | Generated `instance.schema.json`, `layout.schema.json`, `theme.schema.json`, `package.schema.json`, `elements.schema.json`; CI fails when they differ from the code. |
 | Fixtures | `crates/mutable-gui/tests/fixtures/` | One valid document per format and schema version, one invalid package per import limit, and the 300-element page used by the frame benchmark. |
@@ -62,6 +64,11 @@ it.
   commands. Parameter values are not part of the instance state; they change only through
   `ParamSource` gestures.
 - `library` is the only module that touches the file system, through `Storage`.
+- Custom kind code (a developer's `ElementKind`) runs only on the editor thread, is called only
+  by `render` and `perform`, and receives only a `KindContext`; it is never given
+  `ParamSource`, `StateCell`, `Storage`, a tap producer, the undo stack or a nice-plug type.
+- The tool layer (`render/chrome.rs` and `design/`) draws from the fixed tool style only,
+  never from the active theme or from custom kind code.
 
 ## Data flow
 
@@ -92,6 +99,14 @@ it.
    `Command::Replace` through `edit::apply`; on failure a notice and no change.
 9. Export or library save → `doc::encode_package` → `Storage::write_atomic` (temporary file
    in the same folder, then rename) or the file chosen in `FileDialog`.
+10. Frame with a custom element → `render` looks its kind up in `KindRegistry` → unknown:
+    placeholder drawn; known: `ElementKind::draw(KindContext)` with props, theme, parameter
+    values and tap data → in perform mode, for controls, `ElementKind::input(KindContext)` →
+    gesture calls → gesture tracker → `ParamSource` begin, set, end; the tracker ends any
+    gesture still open on pointer release or editor close.
+11. Decode of a custom element → registered at the stored version: validate props against
+    declarations; older: the kind's migrations in order, then validate; newer or unregistered:
+    kept verbatim as an unknown element.
 
 ## Invariants
 
@@ -130,8 +145,17 @@ it.
   paste and import of elements assign new ids.
 - **I-16** While an unreadable saved state is kept, `StateCell` holds that string for saving
   and no `Command` other than discarding it is accepted.
-- **I-17** The tap reader flag is set only while a display bound to that tap is on the
-  current page of an open editor.
+- **I-17** The tap reader flag is set only while a display or custom element bound to that
+  tap is on the current page of an open editor.
+- **I-18** Custom kind code receives only a `KindContext`; no path hands it `ParamSource`,
+  `StateCell`, `Storage`, a tap producer, the undo stack or a nice-plug type, and it is called
+  only from the editor thread.
+- **I-19** Every gesture a custom element begins through `KindContext` is ended, by the element
+  or by the gesture tracker on pointer release or editor close.
+- **I-20** An unknown element's stored kind, version and props are encoded back exactly as they
+  were decoded.
+- **I-21** The tool layer (menu button, editor menu, design panels, dialogs, notices) is drawn
+  only from the fixed tool style, never from the active theme or custom kind code.
 
 ## Test seams
 
@@ -143,6 +167,10 @@ it.
   `FakeFileDialog`, `Storage` over a temporary directory, a fake clipboard and real taps fed
   from the test thread. Rendering snapshots per element kind and built-in theme use the
   harness's snapshot feature.
+- Custom kinds: a `TestKind` with one property of every type, registered in harness tests,
+  covers registration, palette, inspector, validation, drawing, input, gesture closing, tap
+  reading, migration and unknown elements (R-152–R-167); its draw and input record what they
+  receive.
 - Signal taps: unit tests on producer and consumer pairs; allocation tests running pushes
   under nice-assert-no-alloc; criterion benchmarks for push cost.
 - Persistence: unit tests on `StateCell` and `PersistedUi`; round trips through the adapter's

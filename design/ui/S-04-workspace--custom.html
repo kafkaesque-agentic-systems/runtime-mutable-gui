@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-04 Design-mode workspace — a developer's custom element selected</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="reserved" style="right:0;bottom:0"></div><div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon dim" data-icon="group"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised" data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn" data-icon="warn" style="color:var(--tool-warning)">1</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon" data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="fpal" style="left:8px;top:58px">
+    <span class="btn icon" data-icon="knob" data-size="18"></span><span class="btn icon" data-icon="fader" data-size="18"></span><span class="btn icon" data-icon="switch" data-size="18"></span><span class="btn icon" data-icon="xy" data-size="18"></span><span class="btn icon" data-icon="macro" data-size="18"></span><span class="btn icon" data-icon="selector" data-size="18"></span><span class="btn icon" data-icon="menuEl" data-size="18"></span><span class="btn icon" data-icon="tabs" data-size="18"></span>
+    <span class="sepr"></span>
+    <span class="btn icon" data-icon="scope" data-size="18"></span><span class="btn icon" data-icon="spectrum" data-size="18"></span><span class="btn icon" data-icon="meter" data-size="18"></span><span class="btn icon" data-icon="gr" data-size="18"></span>
+    <span class="sepr"></span>
+    <span class="btn icon" data-icon="label" data-size="18"></span><span class="btn icon" data-icon="panel" data-size="18"></span><span class="btn icon" data-icon="image" data-size="18"></span>
+    <span class="sepr"></span>
+    <span class="btn icon on" data-icon="curve" data-size="18" style="color:var(--tool-accent)"></span>
+  </div>
+  <div class="tp float pop arrow-r" style="left:60px;top:196px;width:264px">
+    <div class="sec" style="padding:8px 10px 8px 12px"><div class="row"><span data-icon="curve" data-size="16" style="color:var(--tool-accent)"></span><span class="title">Transfer curve</span><span class="sp"></span><span class="btn icon dim" data-icon="copy" data-size="14"></span><span class="btn icon dim" data-icon="trash" data-size="14"></span></div>
+      <div class="muted" style="font-size:11px">Reference FX · version 1</div><div class="mono muted" style="font-size:10px;white-space:nowrap">org.mutable-gui.reference.transfer</div></div>
+    <div class="sec" style="padding-top:4px;padding-bottom:4px"><div class="acc"><span data-icon="chevronR" data-size="12"></span>Frame<span class="sp"></span><span class="mono" style="text-transform:none;letter-spacing:0">336, 318 · 144 × 186</span></div></div>
+    <div class="sec">
+      <div class="acc"><span data-icon="chevron" data-size="12"></span>Properties</div>
+      <div class="row"><span class="muted" style="width:62px">Drive</span><div class="field" style="flex:1"><span data-icon="link" data-size="13" style="color:var(--tool-accent)"></span>Drive › Drive</div></div>
+      <div class="row"><span class="muted" style="width:62px">Curve</span><div class="field" style="flex:1"><span class="swatch" style="background:var(--role-accent-3)"></span>accent-3<span style="flex:1"></span><span data-icon="chevron" data-size="12" class="muted"></span></div></div>
+      <div class="row"><span class="muted" style="width:62px">Grid</span><div class="seg" style="flex:1"><span class="on">On</span><span>Off</span></div></div>
+      <div class="row"><span class="muted" style="width:62px">Points</span><div class="range" style="flex:1"><div class="t"></div><div class="f" style="left:0;right:80%"></div><div class="k" style="left:20%"></div></div><span class="mono" style="width:30px;text-align:right">128</span></div>
+    </div>
+  </div>
+</div>
+<script>window.mgReady = function () {
+  const L = JSON.parse(JSON.stringify(MG.REF)); const sc = L.elements.find((e) => e.id === "scope"); sc.w = 300; L.elements.push({ id: "tc", kind: "custom_transfer", x: 336, y: 318, w: 144, h: 186, value: 0.44 });
+  MG.stage({ layout: L, design: true, grid: true, selected: ["tc"], states: { envamt: { state: "unbound", missing: "env_amount" } } });
+  document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" });
+};</script>
+</body>
+</html>

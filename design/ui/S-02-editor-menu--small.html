@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="400x300">
+<title>S-02 Editor menu — small window, Theme drilled in</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+</head>
+<body>
+<div class="host" style="width:400px;height:300px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div id="mb"></div>
+  <div class="menu pop" style="right:8px;bottom:40px;width:220px">
+    <div class="li hover"><span data-icon="arrowBack"></span><span class="title">Theme</span></div>
+    <div class="sep"></div>
+    <div class="li sel"><span data-icon="check"></span>Studio Dark</div>
+    <div class="li"><span style="width:16px"></span>Studio Light</div>
+    <div class="li"><span style="width:16px"></span>High Contrast</div>
+    <div class="li"><span style="width:16px"></span>Night Ink</div>
+    <div class="sep"></div>
+    <div class="li"><span data-icon="upload"></span>Import theme…</div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ layout: MG.SMALL }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "" }); };</script>
+</body>
+</html>

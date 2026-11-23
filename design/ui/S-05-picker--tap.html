@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="devpipe-viewport" content="840x520">
+<title>S-05 Parameter picker — choosing a signal tap for a display</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tools.css">
+<script src="kit.js"></script>
+
+</head>
+<body>
+<div class="host" style="width:840px;height:520px">
+  <div id="stage" style="position:absolute;inset:0"></div>
+  <div class="reserved" style="right:0;bottom:0"></div><div id="mb"></div>
+  <div class="ftb" style="left:186px;top:8px">
+    <span class="btn icon" data-icon="undo"></span><span class="btn icon dim" data-icon="redo"></span><span class="div"></span>
+    <span class="btn" data-icon="alignL">Arrange <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn icon dim" data-icon="group"></span>
+    <span class="btn on" data-icon="grid">8</span><span class="btn icon on" data-icon="snap"></span><span class="div"></span>
+    <span class="btn raised " data-icon="pages">Main <span data-icon="chevron" data-size="12"></span></span>
+    <span class="btn " data-icon="warn" style="color:var(--tool-warning)">2</span>
+    <span class="btn icon" data-icon="eye"></span><span class="btn icon " data-icon="palette"></span><span class="btn icon" data-icon="folder"></span>
+    <span class="btn primary" data-icon="check">Done</span>
+  </div>
+  <div class="tp float pop arrow-l" style="left:492px;top:330px;width:270px">
+    <div class="sec"><div class="row"><span data-icon="scope" data-size="16"></span><span class="title">Oscilloscope</span><span class="sp"></span><span class="btn icon dim" data-icon="close" data-size="14"></span></div></div>
+    <div class="sec">
+      <div class="acc"><span data-icon="chevron" data-size="12"></span>Signal</div>
+      <div class="list">
+        <div class="li sel"><span data-icon="check" data-size="14"></span><span class="mono" style="font-size:12px">out</span><span class="sp"></span><span class="sub">audio · stereo</span></div>
+        <div class="li hover"><span style="width:14px"></span><span class="mono" style="font-size:12px">pre</span><span class="sp"></span><span class="sub">audio · mono</span></div>
+      </div>
+      <div class="muted" style="font-size:11px;margin-top:6px">gr is a scalar tap; it feeds gain-reduction meters only.</div>
+    </div>
+    <div class="sec"><div class="acc"><span data-icon="chevron" data-size="12"></span>Display</div>
+      <div class="row"><span class="muted" style="width:56px">Window</span><div class="range" style="flex:1"><div class="t"></div><div class="f" style="left:0;right:91%"></div><div class="k" style="left:9%"></div></div><span class="mono" style="width:44px;text-align:right">50 ms</span></div>
+    </div>
+  </div>
+</div>
+<script>window.mgReady = function () { MG.stage({ design: true, grid: true, selected: ["scope"] }); document.getElementById("mb").outerHTML = MG.menuButton({ state: "design" }); };</script>
+</body>
+</html>
