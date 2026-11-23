@@ -1,0 +1,19 @@
+[package]
+name = "mutable-gui-testkit"
+description = "Fakes and harness helpers for mutable-gui tests (dev-dependency only)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+name = "mutable_gui_testkit"
+
+[dependencies]
+mutable-gui = { path = "../mutable-gui" }
+egui.workspace = true
+egui_kittest.workspace = true
+
+[lints]
+workspace = true
