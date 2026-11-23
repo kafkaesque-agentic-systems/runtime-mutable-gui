@@ -1,0 +1,20 @@
+[package]
+name = "mutable-gui"
+description = "A plugin interface the user can rearrange, restyle and save while the plugin runs."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "mutable_gui"
+
+[dependencies]
+egui.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true
