@@ -1,0 +1,49 @@
+# Runs the Phase gate commands on every push and pull request. The toolchain comes from
+# rust-toolchain.toml (`rustup show` installs it). Snapshot pictures are compared on macOS only
+# (D-46); the other platforms build and run every other test.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain
+        run: rustup show
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Lint
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --workspace
+      - name: Stack check
+        run: python3 tools/check-stack.py
+
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the system libraries of baseview and nice-plug
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-xcb-dev libxcb1-dev libxcb-dri2-0-dev libxcb-icccm4-dev libxcursor-dev libxkbcommon-dev libxcb-shape0-dev libxcb-xfixes0-dev libgl-dev libasound2-dev
+      - name: Install the pinned toolchain
+        run: rustup show
+      - name: Test
+        run: cargo test --workspace
+
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain
+        run: rustup show
+      - name: Test
+        run: cargo test --workspace
