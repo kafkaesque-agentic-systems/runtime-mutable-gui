@@ -1670,6 +1670,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "mutable-gui-reference"
+version = "0.1.0"
+dependencies = [
+ "nice-plug",
+]
+
+[[package]]
 name = "mutable-gui-testkit"
 version = "0.1.0"
 dependencies = [

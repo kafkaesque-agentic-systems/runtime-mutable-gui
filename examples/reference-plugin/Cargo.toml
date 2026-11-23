@@ -1,0 +1,18 @@
+[package]
+name = "mutable-gui-reference"
+description = "Reference FX: the example CLAP plugin that exercises mutable-gui."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "mutable_gui_reference"
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nice-plug.workspace = true
+
+[lints]
+workspace = true
