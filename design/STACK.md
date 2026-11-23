@@ -14,34 +14,34 @@ committed.
 | cargo | 1.99.1 | Build, test, bench | `cargo --version` on this Mac |
 | rustfmt | 1.99.1 toolchain component | Formatting gate | `rustup component list --installed` |
 | clippy | 1.99.1 toolchain component | Lint gate | `rustup component list --installed` |
-| nice-plug | 0.4.2 | Plugin framework of the adapter and the reference plugin (CLAP export, parameters, persisted fields); features `editor`, `zstd` | crates.io API |
-| nice-plug-egui | 0.6.0 | egui editor for nice-plug; feature `opengl` (D-20) | crates.io API |
-| nice-plug-xtask | 0.1.1 | Bundling the reference plugin (`cargo xtask bundle`) | crates.io API |
-| egui | 0.37.0 | Immediate-mode GUI of the core | crates.io API |
-| egui-baseview | 0.9.0 | Window backend under nice-plug-egui (resolved, not a direct dependency) | crates.io API; required `^0.9.0` by nice-plug-egui 0.6.0 |
-| baseview | 0.4.2 | Native plugin window (resolved, not a direct dependency) | crates.io API; required `^0.4.1` by egui-baseview 0.9.0 |
-| serde | 1.0.229 | Derives for every document type | crates.io API |
-| serde_json | 1.0.154 | JSON encoding and decoding of documents | crates.io API |
-| schemars | 1.2.3 | JSON Schema generation for `schema/` | crates.io API |
-| base64 | 0.23.1 | Asset encoding inside documents | crates.io API |
-| uuid | 1.29.3 | Element, page and asset ids (v4); feature `v4`, `serde` | crates.io API |
-| thiserror | 2.0.21 | Error types | crates.io API |
-| arc-swap | 1.9.5 | `StateCell` atomic hand-off of the encoded instance state (D-26) | crates.io API |
-| rtrb | 0.4.1 | Wait-free single-producer single-consumer ring of audio taps | crates.io API |
-| realfft | 3.5.1 | Real FFT for the spectrum display (editor thread only) | crates.io API |
-| png | 0.18.1 | PNG asset decoding and validation | crates.io API |
-| skrifa | 0.44.0 | Font asset validation with the same parser egui uses | crates.io API; epaint 0.37.0 requires `^0.44.0` |
-| rfd | 0.18.0 | System file dialogs for import and export | crates.io API |
-| dirs | 7.0.0 | Platform user data directory of the library (D-32) | crates.io API |
-| proptest | 1.12.0 | Property tests (round trips, undo, malformed input) | crates.io API |
-| criterion | 0.8.2 | Benchmarks of the performance requirements | crates.io API |
-| egui_kittest | 0.37.0 | Headless editor harness and rendering snapshots; features `snapshot`, `wgpu` (dev-dependency only, D-46) | crates.io API |
-| wgpu | 30.0.1 | Test-only renderer of egui_kittest snapshots (resolved through egui_kittest's `wgpu` feature, never in the plugin; D-46) | `Cargo.lock` of a scratch build with egui_kittest 0.37.0 features `snapshot`, `wgpu`, 2026-11-22 |
-| egui-wgpu | 0.37.0 | egui's wgpu painter under egui_kittest (resolved, test-only; D-46) | same lockfile |
-| nice-assert-no-alloc | 1.0.0 | Allocation tests of tap pushes and the reference plugin's process call | crates.io API |
-| egui_material_icons | 0.9.0 | Tool and palette icons (Material Symbols Rounded, D-40) | crates.io API; requires `egui ^0.37.0` |
+| nice-plug | 0.4.2 | Plugin framework of the adapter and the reference plugin (CLAP export, parameters, persisted fields); features `editor`, `zstd` | `Cargo.lock`, 2026-11-23; crates.io API |
+| nice-plug-egui | 0.6.0 | egui editor for nice-plug; feature `opengl` (D-20) | `Cargo.lock`, 2026-11-23; crates.io API |
+| nice-plug-xtask | 0.1.1 | Bundling the reference plugin (`cargo xtask bundle`) | `Cargo.lock`, 2026-11-23; crates.io API |
+| egui | 0.37.0 | Immediate-mode GUI of the core; feature `default_fonts` (egui's Ubuntu Light, Hack and emoji fonts, D-41) | `Cargo.lock`, 2026-11-23; crates.io API |
+| egui-baseview | 0.9.0 | Window backend under nice-plug-egui (resolved, not a direct dependency) | `Cargo.lock`, 2026-11-23; crates.io API; required `^0.9.0` by nice-plug-egui 0.6.0 |
+| baseview | 0.4.2 | Native plugin window (resolved, not a direct dependency) | `Cargo.lock`, 2026-11-23; crates.io API; required `^0.4.1` by egui-baseview 0.9.0 |
+| serde | 1.0.229 | Derives for every document type | `Cargo.lock`, 2026-11-23; crates.io API |
+| serde_json | 1.0.154 | JSON encoding and decoding of documents | `Cargo.lock`, 2026-11-23; crates.io API |
+| schemars | 1.2.3 | JSON Schema generation for `schema/` | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| base64 | 0.23.1 | Asset encoding inside documents | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| uuid | 1.29.3 | Element, page and asset ids (v4); feature `v4`, `serde` | `Cargo.lock`, 2026-11-23; crates.io API |
+| thiserror | 2.0.21 | Error types | `Cargo.lock`, 2026-11-23; crates.io API |
+| arc-swap | 1.9.5 | `StateCell` atomic hand-off of the encoded instance state (D-26) | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| rtrb | 0.4.1 | Wait-free single-producer single-consumer ring of audio taps | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| realfft | 3.5.1 | Real FFT for the spectrum display (editor thread only) | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| png | 0.18.1 | PNG asset decoding and validation | `Cargo.lock`, 2026-11-23; crates.io API |
+| skrifa | 0.44.0 | Font asset validation with the same parser egui uses | `Cargo.lock`, 2026-11-23; crates.io API; epaint 0.37.0 requires `^0.44.0` |
+| rfd | 0.18.0 | System file dialogs for import and export | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| dirs | 7.0.0 | Platform user data directory of the library (D-32) | crates.io API; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
+| proptest | 1.12.0 | Property tests (round trips, undo, malformed input) | `Cargo.lock`, 2026-11-23; crates.io API |
+| criterion | 0.8.2 | Benchmarks of the performance requirements | `Cargo.lock`, 2026-11-23; crates.io API |
+| egui_kittest | 0.37.0 | Headless editor harness and rendering snapshots; features `snapshot`, `wgpu` (dev-dependency only, D-46) | `Cargo.lock`, 2026-11-23; crates.io API |
+| wgpu | 30.0.2 | Test-only renderer of egui_kittest snapshots (resolved through egui_kittest's `wgpu` feature, never in the plugin; D-46) | `Cargo.lock` of this workspace, 2026-11-23 (resolved through egui_kittest 0.37.0 features `snapshot`, `wgpu`; the scratch build of 2026-11-22 had 30.0.1) |
+| egui-wgpu | 0.37.0 | egui's wgpu painter under egui_kittest (resolved, test-only; D-46) | `Cargo.lock`, 2026-11-23 |
+| nice-assert-no-alloc | 1.0.0 | Allocation tests of tap pushes and the reference plugin's process call | `Cargo.lock`, 2026-11-23; crates.io API |
+| egui_material_icons | 0.9.0 | Tool and palette icons (Material Symbols Rounded, D-40) | crates.io API; requires `egui ^0.37.0`; pinned `=` in `Cargo.toml`, not yet used by a member so not yet in `Cargo.lock` |
 | Inter | 4.1 | Bundled font, Regular and Medium, for the tools and as a built-in theme font (D-41) | GitHub release `rsms/inter` v4.1, 2024-11-16; SIL OFL 1.1 |
-| tempfile | 3.27.0 | Temporary library folders in tests | crates.io API |
+| tempfile | 3.27.0 | Temporary library folders in tests | `Cargo.lock`, 2026-11-23; crates.io API |
 | clap-validator | 0.4.1 | CLAP conformance and state tests of the reference plugin | `clap-validator --version` on this Mac |
 | Bitwig Studio | 5.3.13 | Manual host gate (owner) | `CFBundleShortVersionString` of `/Applications/Bitwig Studio.app` |
 | git | 2.54.0 (Apple Git-157) | Version control | `git --version` on this Mac |
