@@ -1,0 +1,7 @@
+#!/bin/sh
+# Purpose: the project's fast checks before every commit (called by the devpipe pre-commit hook).
+# Runs the formatter check, then clippy with warnings as errors; stops at the first failure.
+# Exit: the status of the first failing check, 0 when both pass.
+cargo fmt --all -- --check || exit $?
+cargo clippy --workspace --all-targets -- -D warnings || exit $?
+exit 0
