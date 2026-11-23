@@ -28,7 +28,8 @@ sh tools/validate-clap.sh
   clap-validator 0.4.1; each line it prints names what is missing. `docs/RUNBOOK.md` section 1
   says how to install each.
 - `python3 tools/devpipe/run.py doctor` turns on the repository's git hooks (formatting and
-  clippy before every commit) and creates the pipeline's working folders.
+  clippy before every commit) and creates the pipeline's working folders. In a fresh clone it
+  also writes a default `.devpipe/config.json` with no gates (see the repository map).
 - `cargo test --workspace` runs every test except the timing bounds, which run with
   `cargo test --workspace --release perf_`.
 - The bundle lands in `target/bundled/mutable-gui-reference.clap`; `sh tools/validate-clap.sh`
@@ -51,7 +52,8 @@ sh tools/validate-clap.sh
 | `tools/` | `check-env.sh` (environment check), `validate-clap.sh` (CLAP gate), `fetch-inter.sh` (font download), `check-stack.py` (STACK.md against `Cargo.lock`) |
 | `.githooks/` | git hooks; `pre-commit.project` runs `cargo fmt --check` and clippy |
 | `.github/workflows/ci.yml` | GitHub Actions CI for macOS, Linux and Windows on every push and pull request |
-| `setup-prerequisites.sh` | the one-time installer the owner runs (pinned Rust toolchain) |
+| `setup-prerequisites.sh` | the one-time installer the owner runs (Xcode command line tools, pinned Rust toolchain) |
+| `.devpipe/`, `.claude/`, `.opencode/` | the owner's local pipeline configuration and agent files; ignored by git, so a clone does not have them |
 
 ## Status
 

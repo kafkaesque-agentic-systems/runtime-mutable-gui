@@ -77,7 +77,7 @@ sh tools/fetch-inter.sh
 | Formatting | `rustfmt.toml` | edition 2024, `max_width = 100` | `cargo fmt --all` |
 | `cargo xtask` | `.cargo/config.toml` | `run --package xtask --release --` | the build helper alias |
 | `UPDATE_SNAPSHOTS` | environment variable | unset | when set, snapshot tests write their pictures instead of comparing them |
-| Phase gate | `phase_gate` in `.devpipe/config.json` | fmt, clippy, `cargo test --workspace`, stack check | what the pipeline runs before a phase merges; `seam_gate` adds the timing, bundle and CLAP commands |
+| Phase gate | `phase_gate` in `.devpipe/config.json` (local, not in git) | fmt, clippy, `cargo test --workspace`, stack check | what the pipeline runs before a phase merges; `seam_gate` adds the timing, bundle and CLAP commands; `docs/TESTING.md` section 2 lists both, so a clone can restore them |
 
 `.env.example` lists the environment variables by name. Secrets: none; the project uses no keys,
 tokens or passwords, and git ignores `.env` files.
@@ -113,6 +113,12 @@ tokens or passwords, and git ignores `.env` files.
 
 ## 6. Working with the pipeline
 
+- The pipeline's configuration (`.devpipe/config.json`) and agents (`.claude/agents/`,
+  `.opencode/agents/`) live only on the owner's Mac; git ignores them. In a fresh clone,
+  `python3 tools/devpipe/run.py doctor` writes a default configuration with no gates and agent
+  names taken from the folder name, so copy the owner's three folders in before running the
+  pipeline there. `parallel.copy` in the configuration copies the configuration and the Claude
+  agents into each worktree of `run --jobs`.
 - Current state: `HANDOFF.md` (written by the runner once a phase has run),
   `python3 tools/devpipe/run.py status`.
 - Run a phase: `python3 tools/devpipe/run.py run --phase N` (commits locally on `phase/NN`, never pushes).

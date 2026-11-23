@@ -82,7 +82,8 @@ command for each. A red gate blocks its phase; it is never skipped or marked fla
 To add a project-wide gate:
 
 1. Add its command to `phase_gate` in `.devpipe/config.json` (or `seam_gate` for a slow one). It
-   must run its tests on every call, never reuse an earlier result.
+   must run its tests on every call, never reuse an earlier result. That file is local and not
+   in git, so also add the command to section 2 of this document.
 2. Add the same command to the macOS job of `.github/workflows/ci.yml`.
 3. If it takes seconds, also add it to `.githooks/pre-commit.project`, which stops at the first
    failing command.
