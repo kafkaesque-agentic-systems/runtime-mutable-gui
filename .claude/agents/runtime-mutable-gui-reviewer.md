@@ -105,6 +105,7 @@ End with the commands you ran and their exit codes, the verdict **CLEAN** or **C
 - "Paste ⌘V" is disabled (choice 28); undo keeps 200 `Arc`-shared states (choices 8, 26).
 - Every core module is `pub` (DEV_PLAN).
 - Custom-kind panics are not contained (D-42).
+- Tests may unwrap, expect and panic (D-49).
 
 ## Commands
 

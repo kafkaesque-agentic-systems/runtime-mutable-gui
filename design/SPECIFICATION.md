@@ -1174,7 +1174,8 @@ Drive draws a different curve after Drive changes.
   state are untrusted data and hold no executable content; every limit of R-137–R-142 holds.
 - Code: Rust edition 2024; minimum supported Rust 1.95; workspace lints are clippy `all` and
   `pedantic` as warnings with `unwrap_used`, `expect_used`, `panic`, `todo`,
-  `unimplemented`, `dbg_macro`, `print_stdout`, `print_stderr` denied; `unsafe_code` is
+  `unimplemented`, `dbg_macro`, `print_stdout`, `print_stderr` denied, except that tests may
+  unwrap, expect and panic (D-49); `unsafe_code` is
   forbidden in the core crate and allowed in the adapter only with a `// SAFETY:` comment on
   each block; `cargo fmt --check` and `cargo clippy -- -D warnings` pass.
 - Licence: MIT OR Apache-2.0 for the library crates and the reference plugin; not published

@@ -594,3 +594,29 @@ where the specification is silent":
 Consequences: Every step that uses a choice cites its number. Choice 28 leaves the edge case
 "the editor menu offers every action that has a shortcut" unmet for Paste; closing it needs a
 clipboard crate in the stack, which is a separate decision.
+
+## D-49 — Tests may unwrap, expect and panic
+
+Status: ACCEPTED
+Date: 2026-11-23 (owner ratified, 2026-11-23: "Ratify D-49")
+Context: The specification's lint set (Non-functional requirements, "Code") denies `unwrap_used`,
+`expect_used` and `panic`, and the gate runs `cargo clippy --workspace --all-targets -- -D
+warnings`, which reaches test code as well. A probe workspace with this lint set on rustc 1.99.1
+(2026-11-23) showed `.unwrap()`, `.expect()` and `panic!` in `tests/*.rs` failing the gate, so
+every test would have to return `Result` and use `?`, and a failed `?` names the error but not
+the line where it arose. With `allow-unwrap-in-tests`, `allow-expect-in-tests` and
+`allow-panic-in-tests` in a root `clippy.toml`, the same probe passed: the three are accepted
+inside `#[test]` functions (closures included) and inside modules marked `#[cfg(test)]` (an
+inner `#![cfg(test)]` counts), and still refused in library code, in a library crate used only
+by tests, and in a test-file helper outside both. `dbg!` and the print macros stay refused, and
+pedantic `manual_assert` still asks for `assert!` in place of `if … { panic!(…) }`.
+Decision: A `clippy.toml` at the repository root holds exactly `allow-unwrap-in-tests = true`,
+`allow-expect-in-tests = true` and `allow-panic-in-tests = true`. A module of shared test
+helpers, such as `examples/reference-plugin/tests/common/mod.rs`, starts with `#![cfg(test)]`.
+Every other lint of the specification's set stays as it is in tests and in library code;
+`crates/mutable-gui-testkit` is library code.
+Consequences: `DEV_PLAN.md` Step 0.4 adds `clippy.toml` to its Files and its Builds line, and
+Step 1.26 starts `examples/reference-plugin/tests/common/mod.rs` with `#![cfg(test)]`. The
+specification's "Code" line gains "tests may unwrap, expect and panic (D-49)". The project
+agents' rule "tests return `Result` and use `?`" becomes this rule. A test failure reports the
+line that failed; library code and the testkit still cannot unwrap.

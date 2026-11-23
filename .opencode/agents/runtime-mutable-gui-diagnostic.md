@@ -53,4 +53,4 @@ TICKET-DEFECT: <why, with file:line. Never suggest adding a file to the ticket>
 
 PROJECT
 - Commands: cargo clippy --workspace --all-targets -- -D warnings · cargo test --workspace · cargo test -p <package> --test <stem>
-- Known pitfalls: clippy denies unwrap, expect, panic! in tests · perf_ tests run only with --release · failed snapshot writes <name>.new.png
+- Known pitfalls: unwrap, expect, panic! fail clippy outside #[test] and #[cfg(test)] · perf_ tests run only with --release · failed snapshot writes <name>.new.png

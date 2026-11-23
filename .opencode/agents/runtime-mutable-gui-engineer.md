@@ -56,5 +56,5 @@ PROJECT
 - Stack: Rust 1.99 edition 2024 · egui 0.37 · nice-plug 0.4 · nice-plug-egui 0.6 · serde_json 1.0 · thiserror 2.0 · arc-swap 1.9 · rtrb 0.4 · egui_kittest 0.37 (dev) · proptest 1.12; crates only from design/STACK.md
 - Layout: crates/mutable-gui = core, no unsafe, no nice-plug · crates/mutable-gui-nice = adapter · crates/mutable-gui-testkit = fakes · examples/reference-plugin = Reference FX, screen tests · design/ui/tokens.css = theme values
 - Invariants: I-01 audio thread runs only tap push, StateCell::store_incoming: no alloc, lock, wait · I-02 never set_state · I-04 parameters only via begin/set/end in perform mode; end every begin · I-07 outside bytes pass doc before edit::apply · I-09 elements store colour roles, never colours
-- Conventions: texts verbatim from DEV_PLAN "Fixed names" · thiserror enums · `///` docs, `# Errors` on Result · tests return Result and use `?`; unwrap, expect, panic! fail clippy
+- Conventions: texts verbatim from DEV_PLAN "Fixed names" · thiserror enums · `///` docs, `# Errors` on Result · unwrap, expect, panic! only in #[test] fns and #![cfg(test)] modules (D-49)
 - Commands: cargo fmt --all -- --check · cargo clippy --workspace --all-targets -- -D warnings · cargo test -p <package> --test <stem>
