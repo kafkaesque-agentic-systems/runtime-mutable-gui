@@ -7,15 +7,18 @@ Operations for mutable-gui. Every command here is literal and was run when writt
 | Tool | Version | Why | How to get it |
 |---|---|---|---|
 | macOS on Apple silicon | 26.7.1, arm64 | the development and gate platform; `tools/check-env.sh` requires `Darwin` and `arm64` | — |
+| Xcode command line tools | any; `/Library/Developer/CommandLineTools` here | the C linker and macOS SDK rustc links with | `sh setup-prerequisites.sh` (below) installs them when `xcode-select -p` finds none |
+| rustup | 1.29.2 here | installs and selects the pinned Rust toolchain | the installer at https://rustup.rs (a person runs it; `rustup --version` checks it) |
 | Rust (rustc, cargo) with rustfmt and clippy | 1.99.1 | pinned in `rust-toolchain.toml` | `sh setup-prerequisites.sh` (below); rustup also installs the pinned toolchain by itself the first time a `cargo` or `rustc` command runs in this folder |
-| clap-validator | 0.4.1 | the CLAP conformance gate | put the clap-validator 0.4.1 binary from the free-audio/clap-validator project in a folder on `PATH` (the owner's Mac has it in `~/.local/bin/`) |
+| clap-validator | 0.4.1 | the CLAP conformance gate | from the release page https://github.com/free-audio/clap-validator/releases/tag/0.4.1, the asset `clap-validator-0.4.1-127-g152b982-macos-15-aarch64.zip`; unpack it and put the `clap-validator` binary in a folder on `PATH` (the owner's Mac has it in `~/.local/bin/`); `clap-validator --version` prints `clap-validator 0.4.1` |
 | python3 | 3.11 or later (`tomllib`); 3.15.2 here | `tools/check-stack.py` and the devpipe toolkit | any python3 of 3.11 or later first on `PATH`; this Mac's is Homebrew's `/opt/homebrew/bin/python3`, because macOS's own `/usr/bin/python3` is 3.9.6 |
 | git, curl, unzip, shasum | macOS built-ins | version control; `tools/fetch-inter.sh` | — |
 | Bitwig Studio | 5.3.13 | the owner's manual host check | — |
 
-`design/STACK.md` pins every tool and library. The one-time steps a person runs are in
-`setup-prerequisites.sh`; today it holds only the Rust toolchain, and no step needs sudo. It
-prints each step and asks before running it:
+`design/STACK.md` pins every tool and library. Install rustup and clap-validator first (table
+above). The other one-time steps a person runs are in `setup-prerequisites.sh`: the Xcode
+command line tools, then the Rust 1.99.1 toolchain. It prints each step and asks before running
+it:
 
 ```sh
 sh setup-prerequisites.sh
@@ -95,6 +98,8 @@ tokens or passwords, and git ignores `.env` files.
 | Symptom | Cause | Fix |
 |---|---|---|
 | `tools/check-env.sh` prints "rustc 1.99.1 is missing" (or rustfmt, clippy) | the pinned toolchain is not installed | `sh setup-prerequisites.sh`, answer `y` |
+| `setup-prerequisites.sh` stops with "rustup: command not found" | rustup is not installed or not on `PATH` | install rustup (https://rustup.rs), open a new shell, run `rustup --version`, then the installer again |
+| Linking fails with "linker `cc` not found" | no Xcode command line tools | `sh setup-prerequisites.sh`, answer `y` to the Xcode step; `xcode-select -p` then prints a path |
 | `tools/check-env.sh` prints "clap-validator 0.4.1 must be on PATH" | clap-validator missing or another version | put the 0.4.1 binary in a folder on `PATH`, then `clap-validator --version` |
 | `tools/validate-clap.sh` prints "target/bundled/mutable-gui-reference.clap is missing" | not bundled yet | `cargo xtask bundle mutable-gui-reference --release` |
 | `tools/validate-clap.sh` prints failures | a CLAP conformance test failed | read `target/clap-validator.json`; rerun one test readably with `clap-validator validate -t param-set-events --in-process target/bundled/mutable-gui-reference.clap` (test name from the JSON) |
