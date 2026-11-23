@@ -1201,6 +1201,9 @@ are snake_case. Unknown fields are refused (R-142).
   name), `shape` (optional shape-token overrides), and kind-specific fields:
   - knob, fader, switch, selector: `binding` (Binding); fader adds `orientation`
     (`vertical` | `horizontal`); selector adds `presentation` (`segments` | `dropdown`).
+  - knob, fader, switch, xy_pad, macro, selector: optional `caption` (0–64 characters). When
+    absent, knob, fader, switch and selector show the bound parameter's name, a macro shows
+    "Macro" and an XY pad shows none; an empty string shows no caption (D-47).
   - xy_pad: `x` and `y` (Binding each).
   - macro: `targets` (1–16 Binding).
   - menu: `label` (text) and `items` (list of `{ text, action }`, action being
@@ -1209,8 +1212,9 @@ are snake_case. Unknown fields are refused (R-142).
   - oscilloscope: `tap`, `window_ms` (5–500). spectrum: `tap`, `fft_size`, `floor_db`.
     level_meter: `tap`. gr_meter: `tap`, `range_db` (6 | 12 | 24 | 48).
   - label: `text` (≤ 4,096 bytes), `typeface` (`body` | `heading` | `value`), `size`
-    (6–200), `align` (`left` | `centre` | `right`).
-  - panel: `surface` (surface role name).
+    (6–200), `align` (`left` | `centre` | `right`), optional `tracking` (0–8 canvas units,
+    default 0; D-47).
+  - panel: `surface` (surface role name), optional `title` (0–64 characters; D-47).
   - image: `asset` (asset id), `fit` (`contain` | `cover` | `stretch`).
   - group: `children` (list of Element, nesting ≤ 16). Element counts (R-066, R-139)
     include groups and every member at any depth.

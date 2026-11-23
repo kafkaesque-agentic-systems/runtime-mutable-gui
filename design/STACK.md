@@ -35,7 +35,9 @@ committed.
 | dirs | 7.0.0 | Platform user data directory of the library (D-32) | crates.io API |
 | proptest | 1.12.0 | Property tests (round trips, undo, malformed input) | crates.io API |
 | criterion | 0.8.2 | Benchmarks of the performance requirements | crates.io API |
-| egui_kittest | 0.37.0 | Headless editor harness and rendering snapshots; feature `snapshot` | crates.io API |
+| egui_kittest | 0.37.0 | Headless editor harness and rendering snapshots; features `snapshot`, `wgpu` (dev-dependency only, D-46) | crates.io API |
+| wgpu | 30.0.1 | Test-only renderer of egui_kittest snapshots (resolved through egui_kittest's `wgpu` feature, never in the plugin; D-46) | `Cargo.lock` of a scratch build with egui_kittest 0.37.0 features `snapshot`, `wgpu`, 2026-11-22 |
+| egui-wgpu | 0.37.0 | egui's wgpu painter under egui_kittest (resolved, test-only; D-46) | same lockfile |
 | nice-assert-no-alloc | 1.0.0 | Allocation tests of tap pushes and the reference plugin's process call | crates.io API |
 | egui_material_icons | 0.9.0 | Tool and palette icons (Material Symbols Rounded, D-40) | crates.io API; requires `egui ^0.37.0` |
 | Inter | 4.1 | Bundled font, Regular and Medium, for the tools and as a built-in theme font (D-41) | GitHub release `rsms/inter` v4.1, 2024-11-16; SIL OFL 1.1 |
@@ -51,7 +53,7 @@ committed.
 - nih-plug: upstream is quiet and pins egui 0.31; nice-plug replaces it (D-01).
 - clack, clap-sys used directly: version 1 has only the nice-plug adapter (D-01).
 - vizia, iced, Slint, webviews (wry, nice-plug-webview): egui is the toolkit (D-02).
-- wgpu rendering: OpenGL is the backend (D-20).
+- wgpu rendering in the plugin: OpenGL is the backend (D-20); wgpu appears only in tests (D-46).
 - RON, TOML, zip archives for documents or packages: JSON only (D-12).
 - Any HTTP, socket or networking crate: the library opens no network connection (I-13).
 - The `image` crate: `png` covers the one image format accepted (R-123).

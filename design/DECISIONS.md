@@ -516,3 +516,35 @@ Context: R-168 needs a custom kind that proves the API end to end without new DS
 Decision: "Transfer curve", a display drawing the drive stage's input-to-output curve from the
 parameter bound to its binding slot, with a colour-role property and a grid toggle.
 Consequences: The reference plugin's palette has a "Reference FX" section.
+
+## D-46 — Snapshot pictures rendered by egui_kittest's wgpu renderer, in tests only
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner, during /dev-plan)
+Context: Every screen of `design/UI.md` is proven by an egui_kittest snapshot that
+`devpipe ui compare` puts beside its mockup. egui_kittest 0.37.0 with only its `snapshot`
+feature has no renderer: `Harness::snapshot` fails with "No default renderer available. Enable
+the wgpu feature or set one via HarnessBuilder::renderer". Options were egui_kittest's `wgpu`
+feature as a test-only dependency, a hand-written CPU rasterizer, or interaction tests without
+pictures.
+Decision: The `wgpu` feature of egui_kittest, in `[dev-dependencies]` only. wgpu 30.0.1 and
+egui-wgpu 0.37.0 enter the test build and never the plugin, which keeps drawing with OpenGL
+(D-20 holds). Snapshot pictures are compared on macOS; on Linux and Windows the same tests run
+their interaction part and skip the picture.
+Consequences: STACK.md gains rows for wgpu and egui-wgpu as test-only. Snapshot PNGs under
+`crates/mutable-gui/tests/snapshots/` are produced on the owner's Mac and committed.
+
+## D-47 — Captions on controls, titles on panels, tracking on labels
+
+Status: ACCEPTED
+Date: 2026-11-22 (owner, during /dev-plan)
+Context: The mockups (S-01, S-04, S-12, S-13) draw a caption under knobs, faders, switches and
+macros ("Character" on a macro is no parameter's name), a Caption section in the inspector, a
+title on panels and letter-spacing on labels; the data model had no field for any of them, and
+R-142 refuses undeclared fields.
+Decision: Optional `caption` (0 to 64 characters) on knob, fader, switch, xy_pad, macro and
+selector; when absent, knob, fader, switch and selector show the bound parameter's name, a macro
+shows "Macro" and an XY pad shows none; an empty string shows no caption. Optional `title` (0 to
+64 characters) on panel. Optional `tracking` (0 to 8 canvas units, default 0) on label.
+Consequences: The specification's data model lists the three fields; schema version 1 includes
+them; the inspector's Caption section edits `caption`.
