@@ -1,0 +1,19 @@
+[package]
+name = "mutable-gui-nice"
+description = "nice-plug adapter of mutable-gui: the editor, its persisted state and parameter access."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "mutable_gui_nice"
+
+[dependencies]
+mutable-gui = { path = "../mutable-gui" }
+nice-plug.workspace = true
+nice-plug-egui.workspace = true
+
+[lints]
+workspace = true
