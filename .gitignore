@@ -1,3 +1,16 @@
 .tickets/.run-state.json
 .tickets/.work/
 __pycache__/
+target
+.DS_Store
+*.new.png
+*.diff.png
+*.old.png
+/schema/*.tmp
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+*.swp
+*~
