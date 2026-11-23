@@ -18,6 +18,13 @@ thiserror.workspace = true
 
 [dev-dependencies]
 mutable-gui-testkit = { path = "../mutable-gui-testkit" }
+proptest.workspace = true
+criterion.workspace = true
+nice-assert-no-alloc.workspace = true
+
+[[bench]]
+name = "smoke"
+harness = false
 
 [lints]
 workspace = true
