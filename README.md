@@ -12,10 +12,11 @@ library itself has no features yet; `DEV_PLAN.md` lists the phases that add them
 
 ## Quick start
 
-On an Apple silicon Mac with macOS, from a clone of this repository (it has no remote yet, so
-clone its folder):
+On an Apple silicon Mac with macOS:
 
 ```sh
+git clone git@github.com:kafkaesque-agentic-systems/runtime-mutable-gui.git
+cd runtime-mutable-gui
 sh tools/check-env.sh
 python3 tools/devpipe/run.py doctor
 cargo test --workspace
@@ -49,7 +50,7 @@ sh tools/validate-clap.sh
 | `xtask/` | the build helper behind `cargo xtask` (`bundle`, `bundle-universal`) |
 | `tools/` | `check-env.sh` (environment check), `validate-clap.sh` (CLAP gate), `fetch-inter.sh` (font download), `check-stack.py` (STACK.md against `Cargo.lock`) |
 | `.githooks/` | git hooks; `pre-commit.project` runs `cargo fmt --check` and clippy |
-| `.github/workflows/ci.yml` | CI for macOS, Linux and Windows (runs once a remote exists) |
+| `.github/workflows/ci.yml` | GitHub Actions CI for macOS, Linux and Windows on every push and pull request |
 | `setup-prerequisites.sh` | the one-time installer the owner runs (pinned Rust toolchain) |
 
 ## Status

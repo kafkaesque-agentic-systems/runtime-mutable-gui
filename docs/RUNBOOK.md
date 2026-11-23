@@ -121,6 +121,8 @@ tokens or passwords, and git ignores `.env` files.
 
 ## 7. Release and rollback
 
-There is no release yet: every crate is version 0.1.0 with `publish = false`, and the
-repository has no remote. Each plan step is one local commit whose subject starts with its
-phase tag (`[P00] step 0.4 …`); going back means reverting those commits with `git revert`.
+There is no release yet: every crate is version 0.1.0 with `publish = false`. The remote is
+`origin`, `git@github.com:kafkaesque-agentic-systems/runtime-mutable-gui.git`; the pipeline
+commits locally and never pushes, and the owner pushes `main`. Each plan step is one commit
+whose subject starts with its phase tag (`[P00] step 0.4 …`); going back means reverting those
+commits with `git revert`.
